@@ -9,25 +9,44 @@
 
         <link rel="shortcut icon" href="">
 
-        
+		<link rel="stylesheet" href="css/bookmarks.css" />
+
         <link rel="stylesheet" href="" />
 
     </head>
-    
-    
+
+
     <body>
 
-            
-            
-            
-            
-    
 
+	<div class="content">
+
+
+      <header class="header">BOOKMARKS</header>
+
+		  <input id="input" type="text" >
+
+
+	</div>
+
+
+    <script id="bookmark-template" type="text/x-handlebars-template">
+        <div class="bookmark">
+            <div>{{name}}</div>
+            <div>{{date}}</div>
+            <div>{{link}}</div>
+            <div>{{tags}}</div>
+            <div>{{note}}</div>
+        </div>
+    </script>
+
+
+    <script src="js/lib/handlebars-v1.3.0-min.js"></script>
     <script src="js/bookmarks.js"></script>
-            
-            
-            
-            
+
+
+
+
     </body>
 </html>
 

@@ -1,5 +1,5 @@
 /*jslint browser:true*/
-/*global console:true,alert:true,confirm:true,forin: true,ActiveXObject:true,FormData:true */
+/*global console:true,alert:true,confirm:true,forin: true,ActiveXObject:true,FormData:true,Handlebars:true */
 
 // # bookmarks table
 // - id
@@ -13,7 +13,7 @@
 // - id
 // - bookmarks id
 // - tag
-        
+
 
 
 
@@ -34,12 +34,31 @@
     var Bookmarks = (function () {
 
         var
-            
+            bookmarkTemplate = Handlebars.compile(document.getElementById('bookmark-template').innerHTML),
+            input = document.getElementById('input'),
+
+            getBookmarksCallback = function (httpRequestProgressEvent) {
+                var xhr = httpRequestProgressEvent.currentTarget,
+                    jsonResponse;
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        console.log(xhr.responseText);
+
+                        // jsonResponse = JSON.parse(xhr.responseText);
+                        // console.log(jsonResponse);
+
+                    } else {
+                        console.log("xhr.status === 200 ERROR");
+                    }
+                }
+            },
+
             getSingleElement = function (htmlPeace, startTag, closeTag) {
                 var startIndex,
                     stopIndex,
                     tempHtml = htmlPeace;
-                
+
 //                console.log(tempHtml.indexOf(startTag));
                 startIndex = tempHtml.indexOf(startTag) + startTag.length;
 
@@ -59,10 +78,10 @@
                 return tempHtml;
 
             },
-            
+
             sendDataToTheServerCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget;
-                
+
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
 
@@ -72,10 +91,10 @@
                         console.log("xhr.status === 200 ERROR");
                     }
                 }
-            
+
             },
-            
-            sendDataToTheServer = function (serverScriptUrl, dataObject, callback) {
+
+            talkToTheServer = function (serverScriptUrl, dataObject, callback) {
                 var xhr, formData, key;
                 try {
                     xhr = new XMLHttpRequest();
@@ -101,7 +120,7 @@
                 xhr.send(formData);
 
             },
-            
+
             // usage: crawlHtml(html, "<DT>");
             crawlHtml = function (html, tag) {
                 var startIndex,
@@ -168,22 +187,23 @@
     //                console.log("counter " + counter);
                 }
 
-                // console.log(bookmarks);
-                sendDataToTheServer('php/writeBookmarks.php', {"bookmarks" : bookmarks},
+                console.log(bookmarks);
+                // this write all the bookmarks in mysql
+                talkToTheServer('php/writeBookmarks.php', {"bookmarks" : JSON.stringify(bookmarks)},
                                     sendDataToTheServerCallback);
             },
 
 
             readJsonFileCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget;
-                
+
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
 
 //                        console.log("get html ok");
 
 //                        parseHtml(xhr.responseText);
-                        
+
                         crawlHtml(xhr.responseText, "<DT>");
 
                         // try {
@@ -197,9 +217,9 @@
                         console.log("xhr.status === 200 ERROR");
                     }
                 }
-            
+
             },
-            
+
             readJsonFile = function (file) {
                 var xhr;
                 try {
@@ -221,11 +241,15 @@
             // CONSTRUCTURE
             // **********************************
             init = (function () {
-//                console.log("init");
 
                 // readJsonFile("data/bookmarks_07_03_14.html");
-               readJsonFile("data/delicious.html");
-                
+                // readJsonFile("data/delicious.html");
+
+                input.value = "hardcoding";
+                var obj = {"input" : input.value};
+
+                talkToTheServer('php/getBookmarks.php', obj, getBookmarksCallback);
+
             }()),
 
             last = "last";
