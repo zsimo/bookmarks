@@ -36,17 +36,65 @@
         var
             bookmarkTemplate = Handlebars.compile(document.getElementById('bookmark-template').innerHTML),
             input = document.getElementById('input'),
+            jsonBookmarksArrayResponse,
 
-            getBookmarksCallback = function (httpRequestProgressEvent) {
+
+
+            deleteBokkmarkCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget,
-                    jsonResponse;
+                    response;
+
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
 
-                        console.log(xhr.responseText);
+                        // console.log(xhr.responseText);
 
-                        // jsonResponse = JSON.parse(xhr.responseText);
-                        // console.log(jsonResponse);
+                        response = JSON.parse(xhr.responseText);
+                        console.log("idDeleted: " + response.idDeleted);
+
+
+                    } else {
+                        console.log("xhr.status === 200 ERROR");
+                    }
+                }
+
+            },
+
+            delButtonClickListener = function (event) {
+                var obj;
+                // console.log(this.id);
+
+                obj = {"id": this.id};
+                talkToTheServer('php/deleteBookmark.php', obj, deleteBokkmarkCallback);
+            },
+
+            getBookmarksCallback = function (httpRequestProgressEvent) {
+                var xhr = httpRequestProgressEvent.currentTarget,
+                    bookmarksHtml = "", i, len,
+                    delButtonsArray;
+
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        // console.log(xhr.responseText);
+
+                        jsonBookmarksArrayResponse = JSON.parse(xhr.responseText).bookmarks;
+                        // console.log(jsonBookmarksArrayResponse);
+
+                        for (var i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
+                            var data = jsonBookmarksArrayResponse[i];
+                            bookmarksHtml += bookmarkTemplate(data);
+                            // console.log(workExperienceHtml);
+                        }
+                        document.getElementById("bookmarks-content").innerHTML = bookmarksHtml;
+                        document.getElementById('bookmarks-counter').innerHTML = "bookmarks counter: " + len;
+
+                        delButtonsArray = document.getElementsByClassName('del-button');
+                        for (i = 0, len = delButtonsArray.length; i < len; i += 1) {
+                            delButtonsArray[i].onclick = delButtonClickListener;
+                        }
+
+
 
                     } else {
                         console.log("xhr.status === 200 ERROR");
@@ -76,6 +124,22 @@
     //            console.log("stopIndex " + stopIndex);
     //            console.log(tempHtml);
                 return tempHtml;
+
+            },
+
+            newBookmarkCallback = function (httpRequestProgressEvent) {
+
+                var xhr = httpRequestProgressEvent.currentTarget;
+
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        console.log(xhr.responseText);
+
+                    } else {
+                        console.log("xhr.status === 200 ERROR");
+                    }
+                }
 
             },
 
@@ -193,6 +257,48 @@
                                     sendDataToTheServerCallback);
             },
 
+            filter = function (text) {
+                var i, len, j, counter = 0;
+
+                if (text[0] === "#") {
+                    var tags = text.substring(1).split(" ");
+                    console.log(tags);
+
+                    for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
+                        for (j = 0; j < tags.length; j += 1) {
+                            if (jsonBookmarksArrayResponse[i].tags.indexOf(tags[j]) === -1) {
+                                // console.log(jsonBookmarksArrayResponse[i].id);
+                                document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark hide";
+
+                            } else {
+                                // console.log("contiene");
+                                // console.log("name" + jsonBookmarksArrayResponse[i].name);
+                                document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark show";
+                                counter += 1;
+                            }
+                        }
+                    }
+
+
+                } else {
+
+                    for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
+                        if (jsonBookmarksArrayResponse[i].name.indexOf(text) === -1) {
+                            // console.log(jsonBookmarksArrayResponse[i].id);
+                            document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark hide";
+                        } else {
+                            // console.log("contiene");
+                            // console.log("name" + jsonBookmarksArrayResponse[i].name);
+                            document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark show";
+                            counter += 1;
+                        }
+                    }
+
+                }
+                console.log(counter);
+                document.getElementById('bookmarks-counter').innerHTML = "bookmarks counter: " + counter;
+            },
+
 
             readJsonFileCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget;
@@ -245,7 +351,6 @@
                 // readJsonFile("data/bookmarks_07_03_14.html");
                 // readJsonFile("data/delicious.html");
 
-                input.value = "hardcoding";
                 var obj = {"input" : input.value};
 
                 talkToTheServer('php/getBookmarks.php', obj, getBookmarksCallback);
@@ -258,7 +363,22 @@
         // ***************************
         // LISTENERS
         // ***************************
+        input.oninput = function (event) {
 
+            filter(this.value);
+
+        };
+
+        document.getElementById("newBookmarkButton").onclick = function (event) {
+            var obj = {
+                "name" : document.getElementById("formName").value,
+                "link" : document.getElementById("formLink").value,
+                "tags" : document.getElementById("formTags").value,
+                "note" : document.getElementById("formNote").value,
+            };
+
+            talkToTheServer('php/newBookmark.php', obj, newBookmarkCallback);
+        };
 
         // ***************************
         // public API

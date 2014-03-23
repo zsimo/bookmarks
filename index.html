@@ -22,9 +22,19 @@
 	<div class="content">
 
 
-      <header class="header">BOOKMARKS</header>
+	<header class="header">BOOKMARKS</header>
 
-		  <input id="input" type="text" >
+		<input id="formName" type="text" name="name" placeholder="name">
+		<input id="formLink" type="text" name="link" placeholder="link">
+		<input id="formTags" type="text" name="tags" placeholder="tags,tags">
+		<input id="formNote" type="text" name="note" placeholder="note">
+		<button id="newBookmarkButton">submit</button>
+
+		<p id="bookmarks-counter"></p>
+
+		<input id="input" type="text" >
+
+		<div id="bookmarks-content"></div>
 
 
 	</div>
@@ -34,9 +44,10 @@
         <div class="bookmark">
             <div>{{name}}</div>
             <div>{{date}}</div>
-            <div>{{link}}</div>
+            <div><a href="{{link}}">{{link}}</a></div>
             <div>{{tags}}</div>
             <div>{{note}}</div>
+            <button id="{{id}}" class="del-button">DEL</button>
         </div>
     </script>
 

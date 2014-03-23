@@ -13,7 +13,7 @@ echo '{';
     require('connect.php');
 
 	$results = array();
-	$query = "SELECT * FROM bookmarks";
+	$query = "SELECT * FROM bookmarks ORDER BY date DESC";
 	$jsonString = '[';
 
 	class bookmark {}
@@ -25,9 +25,10 @@ echo '{';
 
 			while ($rows = $result->fetch_assoc()) {
 				$book = new bookmark;
+				$book->id = $rows['id'];
 				$book->name = $rows['name'];
 				$book->link = $rows['link'];
-				$book->date = $rows['date'];
+				$book->date = date("D, d M Y - H:i:s", $rows['date']);
 				$book->tags = $rows['tags'];
 				$book->note = $rows['note'];
 
@@ -44,7 +45,7 @@ echo '{';
 				// array_push($book, $rows['tags']);
 				// array_push($book, $rows['note']);
 
-				// array_push($results, $book);
+				array_push($results, $book);
 
 				$jsonString .= '{"name":"'. $rows['name'] .'",';
 				$jsonString .= '"link":"'. $rows['link'] .'",';
@@ -72,7 +73,7 @@ echo '{';
 	// $prova['prova'] = "prova";
 
 
-	echo '"bookmarks" : '. $jsonString .",";
+	echo '"bookmarks" : '. json_encode($results) .",";
 
 	// echo '"bookmarks" : "'.json_encode($results).'",';
 
@@ -112,13 +113,13 @@ echo '{';
     // $me = new Person('boring', '12345', 12345);
     // echo $me->greet();
 
-	$myArray = array(2012, 'blue', 5);
-    $myAssocArray = array('year' => 2012,'colour' => 'blue','doors' => 5);
+	// $myArray = array(2012, 'blue', 5);
+    // $myAssocArray = array('year' => 2012,'colour' => 'blue','doors' => 5);
 
-    $salad = array('lettuce' => 'with','tomato' => 'without','onions' => 'with');
-  	foreach ($salad as $ingredient=>$include) {
-		echo $include . ' ' . $ingredient . '<br />';
-  	}
+    // $salad = array('lettuce' => 'with','tomato' => 'without','onions' => 'with');
+  	// foreach ($salad as $ingredient=>$include) {
+		// echo $include . ' ' . $ingredient . '<br />';
+  	// }
 
 echo '"last": ""';
 echo '}';
