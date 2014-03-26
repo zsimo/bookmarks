@@ -10,13 +10,15 @@ echo '{';
 //    error reporting for development
     // error_reporting(E_ALL);
 
-    require('connect.php');
 
+
+    require('connect.php');
 	$results = array();
 	$query = "SELECT * FROM bookmarks ORDER BY date DESC";
 	$jsonString = '[';
 
 	class bookmark {}
+
 
 	if ($result = $db->query($query)) {
 
@@ -70,25 +72,9 @@ echo '{';
 		die($db->error);
 	}
 
-	// $prova['prova'] = "prova";
-
 
 	echo '"bookmarks" : '. json_encode($results) .",";
 
-	// echo '"bookmarks" : "'.json_encode($results).'",';
-
-  	// echo '"test" : "'.$_REQUEST['input'].'",';
-
-
-
-  // $langs = array("JavaScript","HTML/CSS","PHP","Python", "Ruby");
-  // foreach ($langs as $lang) {
-      // echo "<li>$lang</li>";
-  // }
-
-  	// function displayName() {
-		// echo "simone";
-	// }
 
     class Person {
         // Creating some properties (variables tied to an object)

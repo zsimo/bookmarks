@@ -76,7 +76,7 @@
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
 
-                        // console.log(xhr.responseText);
+                        console.log(xhr.responseText);
 
                         jsonBookmarksArrayResponse = JSON.parse(xhr.responseText).bookmarks;
                         // console.log(jsonBookmarksArrayResponse);
