@@ -68,7 +68,7 @@
                 talkToTheServer('php/deleteBookmark.php', obj, deleteBokkmarkCallback);
             },
 
-            getBookmarksCallback = function (httpRequestProgressEvent) {
+            pdoStudyCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget,
                     bookmarksHtml = "", i, len,
                     delButtonsArray;
@@ -77,6 +77,25 @@
                     if (xhr.status === 200) {
 
                         console.log(xhr.responseText);
+
+                        // jsonBookmarksArrayResponse = JSON.parse(xhr.responseText).bookmarks;
+                        // console.log(jsonBookmarksArrayResponse);
+
+                    } else {
+                        console.log("xhr.status === 200 ERROR");
+                    }
+                }
+            },
+
+            getBookmarksCallback = function (httpRequestProgressEvent) {
+                var xhr = httpRequestProgressEvent.currentTarget,
+                    bookmarksHtml = "", i, len,
+                    delButtonsArray;
+
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+
+                        // console.log(xhr.responseText);
 
                         jsonBookmarksArrayResponse = JSON.parse(xhr.responseText).bookmarks;
                         // console.log(jsonBookmarksArrayResponse);
@@ -352,6 +371,8 @@
                 // readJsonFile("data/delicious.html");
 
                 var obj = {"input" : input.value};
+
+                talkToTheServer('php/pdoStudy.php', obj, pdoStudyCallback);
 
                 talkToTheServer('php/getBookmarks.php', obj, getBookmarksCallback);
 

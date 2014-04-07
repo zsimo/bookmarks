@@ -72,7 +72,7 @@ echo '{';
 		die($db->error);
 	}
 
-
+	echo '"count" : '. $count .",";
 	echo '"bookmarks" : '. json_encode($results) .",";
 
 
