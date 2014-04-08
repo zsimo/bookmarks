@@ -30,7 +30,7 @@ echo '{';
 	echo '"bookmarks" : '. json_encode($r) .",";
 
 
-
+	// echo "<pre>", print_r($expression, true) ,  "</pre>";
 
 echo '"last": ""';
 echo '}';
