@@ -31,6 +31,9 @@ echo '{';
 
 
 	// echo "<pre>", print_r($expression, true) ,  "</pre>";
+	// prova anche uso var_dump e var_export per stampare gli array
+
+	// is_callable verifica se cio che gli passi è una funzione o no
 
 echo '"last": ""';
 echo '}';
