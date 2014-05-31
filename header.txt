@@ -1,10 +1,7 @@
-GET /tiedostolistaus.aspx?path=1547&kielikoodi=3 HTTP/1.1
-Host: www.ytj.fi
+GET / HTTP/1.1
+Host: simonesacchi.com
 Connection: keep-alive
-Cache-Control: max-age=0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
 User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.131 Safari/537.36
-Accept-Encoding: gzip,deflate,sdch
 Accept-Language: it-IT,it;q=0.8,en-US;q=0.6,en;q=0.4
-Cookie: ASP.NET_SessionId=qwmtuvl0zxp0lowtwmf0rd3q; BIGipServer~YTJ~pool_ytjweb_80=rd13o00000000000000000000ffffc031c0e3o80
 

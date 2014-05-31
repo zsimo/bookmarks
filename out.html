@@ -1,13 +1,307 @@
-HTTP/1.1 400 Bad Request
-Content-Type: text/html; charset=us-ascii
-Server: Microsoft-HTTPAPI/2.0
-Date: Sun, 04 May 2014 09:46:22 GMT
-Connection: close
-Content-Length: 326
+HTTP/1.1 200 OK
+Date: Sun, 04 May 2014 10:26:58 GMT
+Server: Apache
+Vary: Accept-Encoding,User-Agent
+Keep-Alive: timeout=1, max=100
+Connection: Keep-Alive
+Transfer-Encoding: chunked
+Content-Type: text/html
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN""http://www.w3.org/TR/html4/strict.dtd">
-<HTML><HEAD><TITLE>Bad Request</TITLE>
-<META HTTP-EQUIV="Content-Type" Content="text/html; charset=us-ascii"></HEAD>
-<BODY><h2>Bad Request - Invalid Verb</h2>
-<hr><p>HTTP Error 400. The request verb is invalid.</p>
-</BODY></HTML>
+1d68
+<!DOCTYPE html>
+<html>
+<head>
+
+	<META NAME="ROBOTS" CONTENT="NOINDEX,NOFOLLOW">
+	<META NAME="GOOGLEBOT" CONTENT="NOARCHIVE">
+	<META NAME="GOOGLEBOT" CONTENT="NOSNIPPET">
+
+	<link rel="shortcut icon" href="pics/ellsworth_kelly.ico">
+    <script src="script/js/jquery/min/jquery-1.9.1.min.js"></script>
+    <script src="script/js/vendor/jquery.random.js"></script>
+
+	<link rel="stylesheet" href="style/vendor/kube/kube.css" />
+	<link rel="stylesheet" href="style/style.css" />
+
+</head>
+
+<body>
+
+
+<div id="ground">
+	<div id='header'>
+		<p>site under construction</p>
+	</div>
+	<div id='header_line'></div>
+
+	<div id="column_of_icons">
+		<!-- <img src="pics/sandro_chia.jpg" class="pics_in_column"/> <br> -->
+		<a href="https://play.google.com/store/apps/details?id=com.zsimo.getcolorsdeterministicmode&hl=en">
+			<img src="pics/get_colors_new.png" class="pics_in_column"/></a><br>
+		<a href="https://play.google.com/store/apps/details?id=com.zsimolabs.iowa&hl=en">
+			<img src="pics/iowa.png" class="pics_in_column"/></a><br>
+		<a href="https://play.google.com/store/apps/details?id=com.zsimo.trailmakingtest&hl=en">
+			<img src="pics/trial.png" class="pics_in_column"/></a><br>
+		<a href="https://play.google.com/store/apps/details?id=your.zsimolabs.iat&hl=en">
+			<img src="pics/iat.png" class="pics_in_column"/></a><br>
+	</div>
+
+		<a href="https://itunes.apple.com/us/app/iowa-gambling-task/id807409936"><img id="igt_icon" src="igt-charts/img/igt_ios_175x175.jpg" class="ios_app_icon"/></a><br>
+		<a href="https://itunes.apple.com/us/app/implicit-association-test/id775872487">
+			<img id="iat_icon" src="cv/img/ios-app/ios_iat_icon.jpg" class="ios_app_icon"/></a><br>
+
+	<div id="links" style="position: fixed; left: 300px; top: 200px;">
+		<a href="anna_app/index.html" style="color: white; font-size: 26px;">Anna App</a><br>
+		<a href="cv/index.html" style="color: white; font-size: 26px;">CV</a><br>
+		<a href="demo/demo_vian.html" style="color: white; font-size: 26px;">Demo</a><br>
+		<a href="in_bolletta/index.php" style="color: white; font-size: 26px;">inBolletta</a><br>
+		<a href="instaspam/index.html" style="color: white; font-size: 26px;">instaspam</a><br>
+		<a id="isua_link" href="" style="color: white; font-size: 26px;">ISUA</a><br>
+		<a href="http://ec2-54-200-37-143.us-west-2.compute.amazonaws.com:8080/#!simone"
+					style="color: white; font-size: 26px;">notes</a><br>
+		<a id="twct_link" href="" style="color: white; font-size: 26px;">TWCT</a><br>
+
+	</div>
+
+</div>
+
+
+
+
+<script type="text/javascript">
+
+var links = document.getElementById("links");
+var isua_link = document.getElementById("isua_link");
+var twct_link = document.getElementById("twct_link");
+
+var host = location.host;
+
+if (host == "localhost") {
+
+	isua_link.setAttribute('href', '../ISUA/index_isua.php');
+	twct_link.setAttribute('href', '../TWCT/index_twct.php');
+
+}
+else {
+
+	isua_link.setAttribute('href', 'http://www.psi.vipbg.vcu.edu/isua/index_isua.php');
+	twct_link.setAttribute('href', 'http://simolabs.altervista.org/TWCT/index_twct.php');
+
+}
+
+
+function Icon(path, size) {
+	this.left = 0;
+	this.top = 0;
+	this.degree = 1;
+	this.spead_left = 1;
+	this.spead_top = 1;
+	this.counter_left = 0;
+	this.counter_top = 0;
+	this.reverse_hor = false;
+	this.reverse_ver = false;
+	this.size = size;
+	this.ground_width;
+	this.ground_height;
+	this.id = path.replace("pics/", "").replace(".jpg", "");
+	this.element = '<img src="'+path+'" id="'+this.id+'" width="'+this.size+'px" height="'+this.size+'px" ' +
+				   'style="margin-left:'+this.left+'px; margin-top:'+this.top+'px;" class="icon"/>';
+
+	this.setPosition = function(left, top) {
+		this.left = left;
+		this.top = top;
+	};
+
+	this.setGroundLimits = function(width, height) {
+		this.ground_width = width;
+		this.ground_height = height;
+	};
+
+	this.setSize = function(size) {
+		this.size = size;
+	};
+
+	this.getSize = function() {
+		return this.size;
+	};
+
+	this.move = function() {
+
+		if (this.left > (parseInt(this.ground_width) - this.size) || this.left < 0) {
+			this.reverse_hor = !this.reverse_hor;
+		}
+
+		if (this.top > (parseInt(this.ground_height) - (this.size * 4)) || this.top < 10) {
+			this.reverse_ver = !this.reverse_ver;
+		}
+
+		if (this.reverse_hor) {
+			this.left -= this.spead_left;
+		}
+		else {
+			this.left += this.spead_left;
+		}
+
+		if (this.reverse_ver) {
+			this.top -= this.spead_top;
+		}
+		else {
+			this.top += this.spead_top;
+		}
+
+		this.degree += 1;
+
+		if (this.counter_top == 50) {
+			this.spead_top = jQuery.randomBetween(1, 2);
+			this.counter_top = 0;
+		}
+		if (this.counter_left == 30) {
+			this.spead_left = jQuery.randomBetween(1, 2);
+			this.counter_left = 0;
+		}
+
+
+		$('#'+this.id).css('-webkit-transform', 'translate('+this.left+'px, '+this.top+'px)');
+
+		//$('#'+this.id).css('-webkit-transform', 'rotate('+this.degree+'deg)');
+
+		this.counter_top += 1;
+		this.counter_left += 1;
+
+	};
+
+}
+
+
+function Ground(id_ground) {
+	this.ground = $('#'+id_ground);
+	this.margin_left = 0;
+	this.margin_top = 0;
+	this.margin_right = this.ground.css("width");
+	this.margin_top = this.ground.css("height");
+	this.position = 0;
+	//this.id;
+	this.icon_size = parseInt(this.margin_right)/40;
+
+	this.get_icon_size = function() {
+		return this.icon_size;
+	};
+
+	this.add_icon = function(icon) {
+		icon.setPosition(jQuery.randomBetween(0, parseInt(this.margin_right)),
+							jQuery.randomBetween(0, parseInt(this.margin_top)));
+		icon.setGroundLimits(this.margin_right, this.margin_top);
+		//this.ground.append(icon.element);
+		//this.ground.prepend(icon.element);
+		$('#header_line').append(icon.element);
+		//console.log(icon['id']);
+		setInterval(function() {
+			icon.move();
+		}, 10);
+	};
+
+	this.remove_icon = function(icon) {
+		icon.element.remove();
+		//this.ground.append(icon.element);
+	};
+
+}
+
+function create_pics() {
+
+	var g = new Ground('ground');
+
+	if (ellsworth_kelly != undefined) {
+		//e = document.getElementById('ellsworth_kelly');
+		//e.parentNode.removeChild(e);
+		g.remove_icon(ellsworth_kelly);
+		//ellsworth_kelly = undefined;
+		//$('#'+icon.id).remove();
+	}
+	var ellsworth_kelly = new Icon("pics/ellsworth_kelly.jpg", g.get_icon_size());
+	//g.add_icon(ellsworth_kelly);
+
+	var chia = new Icon("pics/sandro_chia.jpg", g.get_icon_size());
+	//g.add_icon(chia);
+
+	var get_color_new = new Icon("pics/get_colors_new.jpg", g.get_icon_size());
+	//g.add_icon(get_color_new);
+
+	var iat = new Icon("pics/iat.jpg", g.get_icon_size());
+	//g.add_icon(iat);
+
+	var iowa = new Icon("pics/iowa.jpg", g.get_icon_size());
+	//g.add_icon(iowa);
+
+	var trial = new Icon("pics/trial.jpg", g.get_icon_size());
+	//g.add_icon(trial);
+
+	var size = Math.round(g.get_icon_size()*3);
+	$('.pics_in_column').css('width', size);
+	$('.pics_in_column').css('height', size);
+	$('#column_of_icons').css('width', size);
+}
+
+
+
+function display() {
+
+	var width = $(window).width();
+	var height = $(window).height();
+	var ground = $('#ground');
+	//ground.css("width", (width/100)*90);
+	ground.css("height", (height/100)*92);
+
+	//create_pics();
+
+}
+
+
+$(window).resize(function() {
+
+	display();
+
+});
+
+display();
+create_pics();
+// var g = new Ground('ground');
+// var i = new Icon("pics/ellsworth_kelly.jpg", g.get_icon_size());
+// g.add_icon(i);
+
+//move(i.id);
+
+//setInterval(move, 10);
+
+
+
+	var locationHashChanged = function() {
+
+		var hash = location.hash;
+
+		if (hash == "#debug") {
+			links.style.display = "";
+		}
+		else {
+			links.style.display = "none";
+		}
+
+	};
+
+	if ("onhashchange" in window) {
+		locationHashChanged();
+	}
+
+	window.onhashchange = locationHashChanged;
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
+0
+

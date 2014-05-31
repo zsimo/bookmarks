@@ -1,7 +1,7 @@
 <?php
 
 $requestMethod = 'GET';
-$host    = 'www.ytj.fi' ;
+$host    = 'www.simonesacchi.com' ;
 $target  = '/index.html';
 $port    = 80 ;
 $timeout = 60;

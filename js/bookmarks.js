@@ -35,12 +35,25 @@
 
         var
             bookmarkTemplate = Handlebars.compile(document.getElementById('bookmark-template').innerHTML),
+            bookmarksContent = document.getElementById("bookmarks-content"),
+            spinner = new Spinner({
+                // color : "#D8D8D8",
+                shadow : true,
+                radius : 40
+            }),
+            spinnerDiv = document.getElementById("spinner"),
             input = document.getElementById('input'),
             jsonBookmarksArrayResponse,
 
+            updateNameInput = document.getElementById('update-name'),
+            updateLinkInput = document.getElementById('update-link'),
+            updateTagsInput = document.getElementById('update-tags'),
+            updateNoteInput = document.getElementById('update-note'),
+            updateIdInput = document.getElementById('update-id'),
 
 
-            deleteBokkmarkCallback = function (httpRequestProgressEvent) {
+
+            deleteBockmarkCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget,
                     response;
 
@@ -50,6 +63,7 @@
                         // console.log(xhr.responseText);
 
                         response = JSON.parse(xhr.responseText);
+                        bookmarksContent.removeChild(document.getElementById(response.idDeleted));
                         console.log("idDeleted: " + response.idDeleted);
 
 
@@ -57,15 +71,56 @@
                         console.log("xhr.status === 200 ERROR");
                     }
                 }
+                stopLoading();
+            },
+
+            updateBockmarkCallback = function (httpRequestProgressEvent) {
+                var xhr = httpRequestProgressEvent.currentTarget,
+                    response;
+
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        // console.log(xhr.responseText);
+                        response = JSON.parse(xhr.responseText);
+                        console.log("idUpdated: " + response.idUpdated);
+
+                        var id = response.idUpdated;
+                        document.getElementById("name-"+id).innerHTML = response.name;
+                        document.getElementById("date-"+id).innerHTML = response.date;
+                        document.getElementById("link-"+id).innerHTML = response.link;
+                        document.getElementById("tags-"+id).innerHTML = response.tags;
+                        document.getElementById("note-"+id).innerHTML = response.note;
+
+                    } else {
+                        console.log("xhr.status === 200 ERROR");
+                    }
+                }
+                $('#update-modal').foundation('reveal', 'close');
+                stopLoading();
+            },
+
+            updateButtonClickListener = function (event) {
+                // TODO
+                updateNameInput.value = document.getElementById("name-"+this.id).innerHTML;
+                updateLinkInput.value = document.getElementById("link-"+this.id).innerHTML;
+                updateTagsInput.value = document.getElementById("tags-"+this.id).innerHTML;
+                updateNoteInput.value = document.getElementById("note-"+this.id).innerHTML;
+                updateIdInput.value = this.id;
+
+
+                $('#update-modal').foundation('reveal', 'open');
 
             },
 
             delButtonClickListener = function (event) {
-                var obj;
-                // console.log(this.id);
+                console.log(this.id);
+                if (confirm("Are you sure?")) {
+                    startLoading();
+                    var obj = {"id": this.id};
+                    talkToTheServer('php/deleteBookmark.php', obj, deleteBockmarkCallback);
+                }
 
-                obj = {"id": this.id};
-                talkToTheServer('php/deleteBookmark.php', obj, deleteBokkmarkCallback);
+
             },
 
             pdoStudyCallback = function (httpRequestProgressEvent) {
@@ -90,6 +145,7 @@
             getBookmarksCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget,
                     bookmarksHtml = "", i, len,
+                    updateButtonsArray,
                     delButtonsArray;
 
                 if (xhr.readyState === 4) {
@@ -105,20 +161,26 @@
                             bookmarksHtml += bookmarkTemplate(data);
                             // console.log(workExperienceHtml);
                         }
-                        document.getElementById("bookmarks-content").innerHTML = bookmarksHtml;
+                        bookmarksContent.innerHTML = bookmarksHtml;
                         document.getElementById('bookmarks-counter').innerHTML = "bookmarks counter: " + len;
+
+                        updateButtonsArray = document.getElementsByClassName('update-button');
+                        for (i = 0, len = updateButtonsArray.length; i < len; i += 1) {
+                            updateButtonsArray[i].onclick = updateButtonClickListener;
+                        }
 
                         delButtonsArray = document.getElementsByClassName('del-button');
                         for (i = 0, len = delButtonsArray.length; i < len; i += 1) {
                             delButtonsArray[i].onclick = delButtonClickListener;
                         }
 
-
+                        stopLoading();
 
                     } else {
                         console.log("xhr.status === 200 ERROR");
                     }
                 }
+
             },
 
             getSingleElement = function (htmlPeace, startTag, closeTag) {
@@ -144,6 +206,16 @@
     //            console.log(tempHtml);
                 return tempHtml;
 
+            },
+
+            startLoading = function () {
+                spinner.spin(spinnerDiv);
+                document.body.classList.add('loading');
+            },
+
+            stopLoading = function () {
+                spinner.stop();
+                document.body.classList.remove('loading');
             },
 
             newBookmarkCallback = function (httpRequestProgressEvent) {
@@ -287,12 +359,14 @@
                         for (j = 0; j < tags.length; j += 1) {
                             if (jsonBookmarksArrayResponse[i].tags.indexOf(tags[j]) === -1) {
                                 // console.log(jsonBookmarksArrayResponse[i].id);
-                                document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark hide";
+                                // document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark hide";
+                                document.getElementById("bookmark-"+jsonBookmarksArrayResponse[i].id).classList.add('hide');
 
                             } else {
                                 // console.log("contiene");
                                 // console.log("name" + jsonBookmarksArrayResponse[i].name);
-                                document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark show";
+                                // document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark show";
+                                document.getElementById("bookmark-"+jsonBookmarksArrayResponse[i].id).classList.remove('hide');
                                 counter += 1;
                             }
                         }
@@ -304,17 +378,20 @@
                     for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
                         if (jsonBookmarksArrayResponse[i].name.indexOf(text) === -1) {
                             // console.log(jsonBookmarksArrayResponse[i].id);
-                            document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark hide";
+                            // document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark hide";
+
+                            document.getElementById("bookmark-"+jsonBookmarksArrayResponse[i].id).classList.add('hide');
                         } else {
                             // console.log("contiene");
                             // console.log("name" + jsonBookmarksArrayResponse[i].name);
-                            document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark show";
+                            // document.getElementById(""+jsonBookmarksArrayResponse[i].id).parentElement.className = "bookmark show";
+                            document.getElementById("bookmark-"+jsonBookmarksArrayResponse[i].id).classList.remove('hide');
                             counter += 1;
                         }
                     }
 
                 }
-                console.log(counter);
+                // console.log(counter);
                 document.getElementById('bookmarks-counter').innerHTML = "bookmarks counter: " + counter;
             },
 
@@ -370,11 +447,15 @@
                 // readJsonFile("data/bookmarks_07_03_14.html");
                 // readJsonFile("data/delicious.html");
 
+                startLoading();
+
                 var obj = {"input" : input.value};
 
-                talkToTheServer('php/pdoStudy.php', obj, pdoStudyCallback);
+                // talkToTheServer('php/pdoStudy.php', obj, pdoStudyCallback);
 
                 talkToTheServer('php/getBookmarks.php', obj, getBookmarksCallback);
+
+                $(document).foundation();
 
             }()),
 
@@ -395,10 +476,29 @@
                 "name" : document.getElementById("formName").value,
                 "link" : document.getElementById("formLink").value,
                 "tags" : document.getElementById("formTags").value,
-                "note" : document.getElementById("formNote").value,
+                "note" : document.getElementById("formNote").value
             };
 
             talkToTheServer('php/newBookmark.php', obj, newBookmarkCallback);
+        };
+
+        document.getElementById("ok-button").onclick = function (event) {
+            // update
+            console.log("update");
+            console.log(event);
+            startLoading();
+            // TODO
+            var obj = {
+                "name_value": updateNameInput.value,
+                "link_value": updateLinkInput.value,
+                "tags_value": updateTagsInput.value,
+                "note_value": updateNoteInput.value,
+                "id_value": updateIdInput.value
+            };
+            talkToTheServer('php/updateBookmark.php', obj, updateBockmarkCallback);
+        };
+        document.getElementById("cancel-button").onclick = function (event) {
+            $('#update-modal').foundation('reveal', 'close');
         };
 
         // ***************************

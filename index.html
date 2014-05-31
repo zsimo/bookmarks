@@ -3,13 +3,18 @@
     <head>
     	<meta charset="utf-8">
 		<meta name="author" content="Simone Sacchi">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <title>bookmarks</title>
 
-        <link rel="shortcut icon" href="">
+        <link rel="shortcut icon" href="img/josef-albers">
+
+  		<link rel="stylesheet" href="foundation-5.2.2/css/normalize.css">
+  		<link rel="stylesheet" href="foundation-5.2.2/css/foundation.min.css">
 
 		<link rel="stylesheet" href="css/bookmarks.css" />
+
+		<script src="foundation-5.2.2/js/vendor/modernizr.js"></script>
 
         <link rel="stylesheet" href="" />
 
@@ -19,38 +24,81 @@
     <body>
 
 
-	<div class="content">
+	<!-- <div class="content"> -->
 
 
-	<header class="header">BOOKMARKS</header>
+	<!-- <header class="header">BOOKMARKS</header> -->
+	<div id="spinner"></div>
 
-		<input id="formName" type="text" name="name" placeholder="name">
-		<input id="formLink" type="text" name="link" placeholder="link">
-		<input id="formTags" type="text" name="tags" placeholder="tags,tags">
-		<input id="formNote" type="text" name="note" placeholder="note">
-		<button id="newBookmarkButton">submit</button>
+	<div class="row">
 
-		<p id="bookmarks-counter"></p>
+		<h1 class="subheader">BOOKMARKS</h1><hr/>
+
+
+		<div class="medium-3 columns">
+			<input id="formName" type="text" name="name" placeholder="name">
+		</div>
+		<div class="medium-3 columns">
+			<input id="formLink" type="text" name="link" placeholder="link">
+		</div>
+		<div class="medium-3 columns">
+			<input id="formTags" type="text" name="tags" placeholder="tags,tags">
+		</div>
+		<div class="medium-3 columns">
+			<input id="formNote" type="text" name="note" placeholder="note">
+		</div>
+		<button id="newBookmarkButton" class="button right success">submit</button>
+
+
+		<hr/>
+		<h4 class="subheader text-center" id="bookmarks-counter"></h4><hr/>
+		<br>
+		<!-- <p id="bookmarks-counter"></p> -->
 
 		<input id="input" type="text" >
 
-		<div id="bookmarks-content"></div>
-
-
 	</div>
+
+	<!-- <hr/> -->
+	<div id="bookmarks-content"></div>
+
+
+	<!-- </div> -->
 
 
     <script id="bookmark-template" type="text/x-handlebars-template">
-        <div class="bookmark">
-            <div>{{name}}</div>
-            <div>{{date}}</div>
-            <div><a href="{{link}}">{{link}}</a></div>
-            <div>{{tags}}</div>
-            <div>{{note}}</div>
-            <button id="{{id}}" class="del-button">DEL</button>
+    	<div class="bookmark large-6 columns" id="bookmark-{{id}}">
+    		<!-- <fieldset> -->
+    		<div class="bookmark-container">
+	            <h4 class="subheader" id="name-{{id}}">{{name}}</h4>
+	            <h6 id="date-{{id}}">{{date}}</h6>
+	            <div><a id="link-{{id}}" href="{{link}}">{{link}}</a></div>
+	            <h5 class="subheader" id="tags-{{id}}">{{tags}}</h5>
+	            <h6 id="note-{{id}}">{{note}}</h6>
+	            <button id="{{id}}" class="update-button button small">UPDATE</button>
+	            <button id="{{id}}" class="del-button button alert small">DEL</button>
+            </div>
+            <!-- </fieldset> -->
         </div>
     </script>
 
+	<div id="update-modal" class="reveal-modal" data-reveal>
+		<h3 class="subheader text-center">Updater</h3>
+		<input id="update-name" type="text" name="name" placeholder="name">
+		<input id="update-link" type="text" name="link" placeholder="link">
+		<input id="update-tags" type="text" name="tags" placeholder="tags,tags">
+		<input id="update-note" type="text" name="note" placeholder="note">
+		<input id="update-id" type="hidden">
+
+		<button id="ok-button" class="updatebutton button right success">OK</button>
+		<button id="cancel-button" class="updatebutton button right alert">Cancel</button>
+	</div>
+
+
+	<script src="js/lib/spin.min.js"></script>
+	<script src="foundation-5.2.2/js/vendor/jquery.js"></script>
+	<script src="foundation-5.2.2/js/vendor/fastclick.js"></script>
+	<script src="foundation-5.2.2/js/foundation.min.js"></script>
 
     <script src="js/lib/handlebars-v1.3.0-min.js"></script>
     <script src="js/bookmarks.js"></script>
