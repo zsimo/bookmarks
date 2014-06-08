@@ -23,11 +23,8 @@ header('Content-type: application/json');
  echo '{';
 
 
-
-
-   // echo '"bookmarks" : "'.json_encode($html).'",';
-
-   echo '"idDeleted" : "'.$id.'",';
+	// echo '"bookmarks" : "'.json_encode($html).'",';
+	echo '"idDeleted" : "'.$id.'",';
 
 
 
@@ -44,15 +41,6 @@ header('Content-type: application/json');
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 ?>
+
+

@@ -9,16 +9,20 @@
 
     require('connect.php');
 
-	$query = "UPDATE bookmarks
-				SET name='{$name}',
-					link='{$link}',
-					date='{$date}',
-					tags='{$tags}',
-					note='{$note}'
-				WHERE id={$id}";
+	// $query = "UPDATE bookmarks
+				// SET name='{$name}',
+					// link='{$link}',
+					// date='{$date}',
+					// tags='{$tags}',
+					// note='{$note}'
+				// WHERE id={$id}";
+				
+	$statement = $db->prepare("UPDATE bookmarks SET name=?, link=?, date=?, tags=?,note=? WHERE id=?");
+	$statement->bind_param('sssssi', $name, $link, $date, $tags, $note, $id);
 
 	try {
-		$db->query($query);
+		// $db->query($query);
+		$statement->execute();
 	} catch (Exception $e) {
 		print_r($e->getMessage());
 	}

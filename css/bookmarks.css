@@ -2,9 +2,7 @@
 .button {
     margin: 0;
 }
-#newBookmarkButton {
-    margin-bottom: 15px;
-}
+
 
 /*.content {
     width: 100%;
@@ -26,6 +24,7 @@
     margin-bottom: 20px;*/
     border: 1px solid #d8d8d8;
     /*background: #f2f2f2;*/
+   	word-wrap: break-word;
 }
 
 
@@ -40,8 +39,8 @@
     margin-right: 20px;
 }
 .loading {
-    opacity: .2;
-    background-color: #3d464d;
+	opacity: .2;
+	background-color: #3d464d;
 }
 .updatebutton {
     margin-top: 25px;
