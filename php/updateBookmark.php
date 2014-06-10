@@ -1,5 +1,7 @@
 <?php
 
+	class bookmark {}
+
 	$name = $_POST['name_value'];
 	$link = $_POST['link_value'];
 	$tags = $_POST['tags_value'];
@@ -27,17 +29,26 @@
 		print_r($e->getMessage());
 	}
 
+	$date = date("D, d M Y - H:i:s", $date);
+
+	$book = new bookmark;
+	$book->id = $id;
+	$book->name = $name;
+	$book->link = $link;
+	$book->date = $date;
+	$book->tags = $tags;
+	$book->note = $note;
 
 
 header('Content-type: application/json');
  echo '{';
 
-
+				
 
 
    // echo '"bookmarks" : "'.json_encode($html).'",';
 
-   $date = date("D, d M Y - H:i:s", $date);
+   echo '"bookmark" : '. json_encode($book) .",";
 
    echo '"idUpdated" : "'.$id.'",';
    echo '"name" : "'.$name.'",';

@@ -166,18 +166,19 @@ Spinner:true, $:true, todayLock:true*/
 					if (xhr.status === 200) {
 
 						// console.log(xhr.responseText);
-// TODO
+
 						response = JSON.parse(xhr.responseText);
-						console.log(response);
+						// console.log(response);
 						removedId = response.idDeleted;
-						// console.log(filteredBookmarks);
-						console.log(filteredBookmarks.length);
+						console.log(removedId);
+						// console.log(filteredBookmarks.length);
 						for (i = 0, len = (filteredBookmarks.length - 1); i < len; i += 1) {
 							if (filteredBookmarks[i].id === removedId) {
+								console.log("****");
 								filteredBookmarks.splice(i, 1);
 							}
 						}
-						console.log(filteredBookmarks.length);
+						// console.log(filteredBookmarks.length);
 						bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
 						displayBookmarks(bookmarksOnThePage);
 
@@ -204,23 +205,46 @@ Spinner:true, $:true, todayLock:true*/
 			updateBockmarkCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget,
                     response,
-                    id;
+                    id, i, len,
+                    updateBookmark,
+                    bookmarksOnThePage;
 
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         // console.log(xhr.responseText);
                         response = JSON.parse(xhr.responseText);
-                        console.log("idUpdated: " + response.idUpdated);
-
+                        // console.log(response);
+                        
+                        updateBookmark = response.bookmark;
+                        // console.log(updateBookmark);
+// TODO
                         id = response.idUpdated;
-                        document.getElementById("name-" + id).innerHTML = response.name;
-                        document.getElementById("date-" + id).innerHTML = response.date;
-                        document.getElementById("link-" + id).innerHTML = response.link;
-                        document.getElementById("tags-" + id).innerHTML = response.tags;
-                        document.getElementById("note-" + id).innerHTML = response.note;
+                        // document.getElementById("name-" + id).innerHTML = response.name;
+                        // document.getElementById("date-" + id).innerHTML = response.date;
+                        // document.getElementById("link-" + id).innerHTML = response.link;
+                        // document.getElementById("tags-" + id).innerHTML = response.tags;
+                        // document.getElementById("note-" + id).innerHTML = response.note;
+                    
+                    		// console.log(filteredBookmarks);
+    						for (i = 0, len = filteredBookmarks.length ; i < len; i += 1) {
+							if (filteredBookmarks[i].id === id) {
+								filteredBookmarks[i] = updateBookmark;
+							}
+						}
+						
+						bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
+						displayBookmarks(bookmarksOnThePage);
+                        
+    						alertBoxContent.innerHTML = 'Bookmark succesfully UPDATED';
+							alertBox.className = 'alert-box right success show';
+							setTimeout(function () {
+								alertBox.className = 'hide';
+						}, 1000);
 
                     } else {
                         console.log("xhr.status === 200 ERROR");
+    						alertBoxContent.innerHTML = 'ERROR UPDATING a bookmark';
+						alertBox.className = 'alert-box right alert show';
                     }
                 }
                 $('#update-modal').foundation('reveal', 'close');
@@ -432,7 +456,7 @@ Spinner:true, $:true, todayLock:true*/
 						bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
 						displayBookmarks(bookmarksOnThePage);
 
-						// TODO
+						
 						document.getElementById("formName").value = null;	
 						document.getElementById("formLink").value = null;
 						document.getElementById("formTags").value = null;
