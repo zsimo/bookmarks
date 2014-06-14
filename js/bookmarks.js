@@ -181,7 +181,9 @@ Spinner:true, $:true, todayLock:true*/
 						response = JSON.parse(xhr.responseText);
 						// console.log(response);
 						removedId = response.idDeleted;
-						console.log(removedId);
+						// 
+						
+						// console.log(removedId);
 						// console.log(filteredBookmarks.length);
 						for (i = 0, len = (filteredBookmarks.length - 1); i < len; i += 1) {
 							if (filteredBookmarks[i].id === removedId) {
@@ -189,9 +191,17 @@ Spinner:true, $:true, todayLock:true*/
 								filteredBookmarks.splice(i, 1);
 							}
 						}
-						// console.log(filteredBookmarks.length);
-						bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
-						displayBookmarks(bookmarksOnThePage);
+						// transition.perspectiveLeftOut
+						// transition.slideLeftBigOut
+						$("#bookmark-"+removedId).velocity("transition.perspectiveLeftOut", { stagger: 500 });
+						// TODO
+						setTimeout(function () {
+							// console.log(filteredBookmarks.length);
+							bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
+							displayBookmarks(bookmarksOnThePage);
+							$(".bookmark-container").velocity("transition.slideUpIn");
+						}, 400);
+
 
 						// bookmarksContent.removeChild(document.getElementById('bookmark-' + response.idDeleted));
 						// console.log("idDeleted: " + response.idDeleted);
@@ -208,8 +218,9 @@ Spinner:true, $:true, todayLock:true*/
 						alertBoxContent.innerHTML = 'ERROR removing a bookmark';
 						alertBox.className = 'alert-box right alert show';
 					}
+					stopLoading();
 				}
-				stopLoading();
+				
 				
 			},
 
@@ -252,9 +263,10 @@ Spinner:true, $:true, todayLock:true*/
 						alertBoxContent.innerHTML = 'ERROR UPDATING a bookmark';
 						alertBox.className = 'alert-box right alert show';
 					}
+					stopLoading();
 				}
 				$('#update-modal').foundation('reveal', 'close');
-				stopLoading();
+				
 			},
 
 			unlockerCallback = function (httpRequestProgressEvent) {
@@ -542,12 +554,15 @@ Spinner:true, $:true, todayLock:true*/
 						// console.log(xhr.responseText);
 
 						newBookmark = JSON.parse(xhr.responseText).bookmark;
-						// console.log(newBookmark);
+						console.log(newBookmark);
 						// console.log(filteredBookmarks.length);
 						filteredBookmarks.unshift(newBookmark);
 						// console.log(filteredBookmarks.length);
 						bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
 						displayBookmarks(bookmarksOnThePage);
+						
+						$("#bookmark-"+newBookmark.id).velocity("transition.bounceLeftIn", { stagger: 100 });
+						// $(".bookmark-container").velocity("callout.shake", { stagger: 75 });
 
 						formName.value = null;
 						formLink.value = null;
