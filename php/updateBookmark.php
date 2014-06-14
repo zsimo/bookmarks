@@ -9,7 +9,7 @@
 	$id = $_POST['id_value'];
 	$date = time();
 
-    require('connect.php');
+	require('connect.php');
 
 	// $query = "UPDATE bookmarks
 				// SET name='{$name}',
@@ -18,7 +18,7 @@
 					// tags='{$tags}',
 					// note='{$note}'
 				// WHERE id={$id}";
-				
+
 	$statement = $db->prepare("UPDATE bookmarks SET name=?, link=?, date=?, tags=?,note=? WHERE id=?");
 	$statement->bind_param('sssssi', $name, $link, $date, $tags, $note, $id);
 
@@ -43,19 +43,19 @@
 header('Content-type: application/json');
  echo '{';
 
-				
 
 
-   // echo '"bookmarks" : "'.json_encode($html).'",';
 
-   echo '"bookmark" : '. json_encode($book) .",";
+// echo '"bookmarks" : "'.json_encode($html).'",';
 
-   echo '"idUpdated" : "'.$id.'",';
-   echo '"name" : "'.$name.'",';
-   echo '"link" : "'.$link.'",';
-   echo '"date" : "'.$date.'",';
-   echo '"tags" : "'.$tags.'",';
-   echo '"note" : "'.$note.'",';
+	echo '"bookmark" : '. json_encode($book) .",";
+
+   // echo '"idUpdated" : "'.$id.'",';
+   // echo '"name" : "'.$name.'",';
+   // echo '"link" : "'.$link.'",';
+   // echo '"date" : "'.$date.'",';
+   // echo '"tags" : "'.$tags.'",';
+   // echo '"note" : "'.$note.'",';
 
  echo '"last": ""';
 

@@ -30,18 +30,20 @@ Spinner:true, $:true, todayLock:true*/
 
 (function (global) {
 
-    "use strict";
+	"use strict";
 
-    var Bookmarks = (function () {
+	var Bookmarks = (function () {
 
-        var
-            bookmarkTemplate = Handlebars.compile(document.getElementById('bookmark-template').innerHTML),
-            bookmarksContent = document.getElementById("bookmarks-content"),
-            spinner = new Spinner({
-                // color : "#D8D8D8",
-                shadow : true,
-                radius : 40
-            }),
+		var NEW_BOOKMARK = 1,
+			UPDATE_BOOKMARK = 2,
+
+			bookmarkTemplate = Handlebars.compile(document.getElementById('bookmark-template').innerHTML),
+			bookmarksContent = document.getElementById("bookmarks-content"),
+			spinner = new Spinner({
+				// color : "#D8D8D8",
+				shadow : true,
+				radius : 40
+			}),
             spinnerDiv = document.getElementById("spinner"),
             input = document.getElementById('input'),
             jsonBookmarksArrayResponse,
@@ -68,6 +70,13 @@ Spinner:true, $:true, todayLock:true*/
 			
 			alertBox = document.getElementById("alert"),
 			alertBoxContent = document.getElementById("alert-content"),
+			
+			formName = document.getElementById("formName"),
+		    formLink = document.getElementById("formLink"),
+			formTags = document.getElementById("formTags"),
+			formNote = document.getElementById("formNote"),
+			returnListenerBool = false,
+			withInputResponseToReturn = 0,
 			
 			keyCharMap = {
 				"65" : "a",
@@ -102,7 +111,8 @@ Spinner:true, $:true, todayLock:true*/
 				var date = new Date(),
 					year = date.getFullYear(),
 					month = date.getMonth(),
-					day = date.getDay();
+					day = date.getDay(),
+                    out = '';
 					
 				month += 1;
 				if (month < 10) {
@@ -112,7 +122,8 @@ Spinner:true, $:true, todayLock:true*/
 				if (day < 10) {
 					day = "0" + day;
 				}
-				return "" + year + month + day;
+                out += year + month + day;
+				return out;
 				
 			},
 
@@ -203,59 +214,54 @@ Spinner:true, $:true, todayLock:true*/
 			},
 
 			updateBockmarkCallback = function (httpRequestProgressEvent) {
-                var xhr = httpRequestProgressEvent.currentTarget,
-                    response,
-                    id, i, len,
-                    updateBookmark,
-                    bookmarksOnThePage;
+				var xhr = httpRequestProgressEvent.currentTarget,
+					response,
+					id,	
+					i,
+					len,
+					updateBookmark,
+					bookmarksOnThePage;
 
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        // console.log(xhr.responseText);
-                        response = JSON.parse(xhr.responseText);
-                        // console.log(response);
-                        
-                        updateBookmark = response.bookmark;
-                        // console.log(updateBookmark);
-// TODO
-                        id = response.idUpdated;
-                        // document.getElementById("name-" + id).innerHTML = response.name;
-                        // document.getElementById("date-" + id).innerHTML = response.date;
-                        // document.getElementById("link-" + id).innerHTML = response.link;
-                        // document.getElementById("tags-" + id).innerHTML = response.tags;
-                        // document.getElementById("note-" + id).innerHTML = response.note;
-                    
-                    		// console.log(filteredBookmarks);
-    						for (i = 0, len = filteredBookmarks.length ; i < len; i += 1) {
-							if (filteredBookmarks[i].id === id) {
+					if (xhr.readyState === 4) {
+						if (xhr.status === 200) {
+						// console.log(xhr.responseText);
+						response = JSON.parse(xhr.responseText);
+
+						updateBookmark = response.bookmark;
+						// console.log(updateBookmark);
+
+						id = updateBookmark.id;
+
+						// console.log(filteredBookmarks);
+						for (i = 0, len = filteredBookmarks.length ; i < len; i += 1) {
+							if (filteredBookmarks[i].id == id) {
 								filteredBookmarks[i] = updateBookmark;
 							}
 						}
-						
 						bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
 						displayBookmarks(bookmarksOnThePage);
-                        
-    						alertBoxContent.innerHTML = 'Bookmark succesfully UPDATED';
-							alertBox.className = 'alert-box right success show';
-							setTimeout(function () {
+
+						alertBoxContent.innerHTML = 'Bookmark succesfully UPDATED';
+						alertBox.className = 'alert-box right success show';
+						setTimeout(function () {
 								alertBox.className = 'hide';
 						}, 1000);
 
-                    } else {
-                        console.log("xhr.status === 200 ERROR");
-    						alertBoxContent.innerHTML = 'ERROR UPDATING a bookmark';
+					} else {
+						// console.log("xhr.status === 200 ERROR");
+						alertBoxContent.innerHTML = 'ERROR UPDATING a bookmark';
 						alertBox.className = 'alert-box right alert show';
-                    }
-                }
-                $('#update-modal').foundation('reveal', 'close');
-                stopLoading();
+					}
+				}
+				$('#update-modal').foundation('reveal', 'close');
+				stopLoading();
 			},
-			
+
 			unlockerCallback = function (httpRequestProgressEvent) {
-				
+
 				var xhr = httpRequestProgressEvent.currentTarget,
 					response;
-				
+
 				if (xhr.readyState === 4) {
 					if (xhr.status === 200) {
 						console.log(xhr.responseText);
@@ -274,6 +280,93 @@ Spinner:true, $:true, todayLock:true*/
 				document.getElementById('unlocker-name').value = null;
 				document.getElementById('unlocker-pass').value = null;
 				
+			},
+			
+			returnCallBack = function (event) {
+
+				if (event.keyCode === 13) {
+					event.preventDefault();
+					if ( withInputResponseToReturn=== NEW_BOOKMARK) {
+						// console.log("NEW_BOOKMARK");
+						newBookmarkListener();
+					} else if (withInputResponseToReturn === UPDATE_BOOKMARK ) {
+						updateBookmarkListener();
+					}
+				} 
+
+			} ,
+			
+			newBookmarkListener = function () {
+				var link = formLink.value,
+					obj;
+				if (link) {
+					startLoading();
+					obj = {
+						"name" : formName.value,	
+						"link" : link,
+						"tags" : formTags.value,
+						"note" : formNote.value
+					};
+		
+					talkToTheServer('php/newBookmark.php', obj, newBookmarkCallback);
+					withInputResponseToReturn = 0;
+				} else {
+					document.removeEventListener('keyup', returnCallBack);
+					returnListenerBool= false;
+					alert('link can not be empty');
+				}	
+			},
+			
+			updateBookmarkListener = function () {
+
+				if (updateLinkInput.value) {
+					startLoading();
+					var obj = {
+						"name_value": updateNameInput.value,
+						"link_value": updateLinkInput.value,
+						"tags_value": updateTagsInput.value,
+						"note_value": updateNoteInput.value,
+						"id_value": updateIdInput.value
+					};
+					talkToTheServer('php/updateBookmark.php', obj, updateBockmarkCallback);
+					withInputResponseToReturn = 0;
+				} else {
+					document.removeEventListener('keyup', returnCallBack);
+					returnListenerBool= false;
+					alert('link can not be empty');
+				}	
+
+			},
+			
+			submitInputListener = function () {
+				
+				if (formName.value || formLink.value || formTags.value || formNote.value) {
+					if (!returnListenerBool) {
+						document.addEventListener('keyup', returnCallBack);
+						returnListenerBool = true;
+					}
+
+				}
+				else {
+					document.removeEventListener('keyup', returnCallBack);
+					returnListenerBool= false;
+				}
+
+			},
+			
+			updateInputListener = function () {
+
+				if (updateNameInput.value || updateLinkInput.value || updateTagsInput.value || updateNoteInput.value) {
+					if (!returnListenerBool) {
+						document.addEventListener('keyup', returnCallBack);
+						returnListenerBool = true;
+					}
+
+				}
+				else {
+					document.removeEventListener('keyup', returnCallBack);
+					returnListenerBool= false;
+				}
 			},
 			
 			updateButtonClickListener = function (event) {
@@ -452,15 +545,14 @@ Spinner:true, $:true, todayLock:true*/
 						// console.log(newBookmark);
 						// console.log(filteredBookmarks.length);
 						filteredBookmarks.unshift(newBookmark);
-						console.log(filteredBookmarks.length);
+						// console.log(filteredBookmarks.length);
 						bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
 						displayBookmarks(bookmarksOnThePage);
 
-						
-						document.getElementById("formName").value = null;	
-						document.getElementById("formLink").value = null;
-						document.getElementById("formTags").value = null;
-						document.getElementById("formNote").value = null;
+						formName.value = null;
+						formLink.value = null;
+						formTags.value = null;
+						formNote.value = null;
 
 						alertBoxContent.innerHTML = 'Bookmark succesfully added';
 						alertBox.className = 'alert-box right success show';
@@ -825,47 +917,19 @@ Spinner:true, $:true, todayLock:true*/
 		};
 
 		document.getElementById("newBookmarkButton").onclick = function (event) {
-			var link = document.getElementById("formLink").value,
-				obj;
-			if (link) {
-				startLoading();
-				obj = {
-					"name" : document.getElementById("formName").value,	
-					"link" : link,
-					"tags" : document.getElementById("formTags").value,
-					"note" : document.getElementById("formNote").value
-				};
-
-				talkToTheServer('php/newBookmark.php', obj, newBookmarkCallback);
-			} else {
-				alert('link can not be empty');
-			}
-
+			newBookmarkListener();
+		};
+		document.getElementById("ok-button").onclick = function (event) {
+			updateBookmarkListener();
+		};
+		document.getElementById("cancel-button").onclick = function (event) {
+			$('#update-modal').foundation('reveal', 'close');
 		};
 
-			document.getElementById("ok-button").onclick = function (event) {
-            // update
-            console.log("update");
-            console.log(event);
-            startLoading();
-            
-            var obj = {
-                "name_value": updateNameInput.value,
-                "link_value": updateLinkInput.value,
-                "tags_value": updateTagsInput.value,
-                "note_value": updateNoteInput.value,
-                "id_value": updateIdInput.value
-            };
-            talkToTheServer('php/updateBookmark.php', obj, updateBockmarkCallback);
-        };
-        document.getElementById("cancel-button").onclick = function (event) {
-            $('#update-modal').foundation('reveal', 'close');
-        };
-   
-        firstButton.onclick = function (event) {
-            
-            var bookmarksOnThePage;
-            
+		firstButton.onclick = function (event) {
+
+			var bookmarksOnThePage;
+
             firstBookmark = 0;
             lastBookmark = bookmarkStep;
             
@@ -891,7 +955,6 @@ Spinner:true, $:true, todayLock:true*/
                 // previousButton.classList.add('disabled');
             }
 
-            
             bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
                         
             displayBookmarks(bookmarksOnThePage);
@@ -916,17 +979,61 @@ Spinner:true, $:true, todayLock:true*/
             // firstButton.classList.remove('disabled');
             // previousButton.classList.remove('disabled');
         };
+        
+		formName.oninput = function () {
+			withInputResponseToReturn = NEW_BOOKMARK;
+			submitInputListener();
+		};	
+		formLink.oninput = function () {
+			withInputResponseToReturn = NEW_BOOKMARK;
+			submitInputListener();
+		};
+		formTags.oninput = function () {
+			withInputResponseToReturn = NEW_BOOKMARK;
+			submitInputListener();
+		};
+		formNote.oninput = function () {
+			withInputResponseToReturn = NEW_BOOKMARK;
+			submitInputListener();
+		};
 
-        // ***************************
-        // public API
-        // ***************************
-        return {
-            last : last
-        };
 
-    }());
+		updateNameInput.oninput = function () {
+			withInputResponseToReturn = UPDATE_BOOKMARK;
+			updateInputListener();
+		};
+		updateLinkInput.oninput = function () {
+			withInputResponseToReturn = UPDATE_BOOKMARK;
+			updateInputListener();
+		};
+		updateTagsInput.oninput = function () {
+			withInputResponseToReturn = UPDATE_BOOKMARK;
+			updateInputListener();
+		};
+		updateNoteInput.oninput = function () {
+			withInputResponseToReturn = UPDATE_BOOKMARK;
+			updateInputListener();
+		};
 
-    global.Bookmarks = Bookmarks;
+		document.getElementById('go-to-the-top-button').onclick = function () {
+			// document.body.scrollTop  = 0;
+			// $('body').scrollTop(0)
+			
+			// $('<a name="top"/>').insertBefore($('body').children().eq(0));
+			// window.location.hash = 'top'
+			document.body.scrollTop = document.documentElement.scrollTop = 0;
+		};
+
+		// ***************************
+		// public API
+		// ***************************
+		return {
+			last : last
+		};
+
+	}());
+
+	global.Bookmarks = Bookmarks;
 
 }(this));
 

@@ -9,8 +9,8 @@
 
         <link rel="shortcut icon" href="img/josef-albers">
 
-  		<link rel="stylesheet" href="foundation-5.2.2/css/normalize.css">
-  		<link rel="stylesheet" href="foundation-5.2.2/css/foundation.min.css">
+		<link rel="stylesheet" href="foundation-5.2.2/css/normalize.css">
+		<link rel="stylesheet" href="foundation-5.2.2/css/foundation.min.css">
 
 		<link rel="stylesheet" href="css/bookmarks.css" />
 
@@ -31,12 +31,12 @@
 	<div id="spinner"></div>
 
 	<div class="row">
-		
+
 		<div class="large-12 columns">
 			<h1 class="subheader left">BOOKMARKS</h1>
 			<div id="alert" data-alert class="hide">
-  				<span id="alert-content"></span>
-  				<a href="#" class="close">&times;</a>
+				<span id="alert-content"></span>
+				<a href="#" class="close">&times;</a>
 			</div>
 			<hr/>	
 		</div>
@@ -65,11 +65,11 @@
 				of
 				<span id="total-bookmarks"></span>
 			</h4>
-			
+
 			<ul id="pagination-buttons" class="button-group right round">
-			  <li><a id="first-button" class="button large secondary">first</a></li>
-			  <li><a id="previous-button" class="button large secondary">previous</a></li>
-			  <li><a id="next-button" class="button large secondary">next</a></li>
+				<li><a id="first-button" class="button large secondary">first</a></li>
+				<li><a id="previous-button" class="button large secondary">previous</a></li>
+				<li><a id="next-button" class="button large secondary">next</a></li>
 			</ul>
 			<br><br>
 			<hr/>
@@ -82,29 +82,41 @@
 
 	</div>
 
-	
 
 	<div id="bookmarks-content"></div>
-	
-
-	<!-- </div> -->
 
 
-    <script id="bookmark-template" type="text/x-handlebars-template">
-    	<div class="bookmark large-6 columns" id="bookmark-{{id}}">
-    		<!-- <fieldset> -->
-    		<div class="bookmark-container">
-	            <h4 class="subheader" id="name-{{id}}">{{name}}</h4>
-	            <h6 id="date-{{id}}">{{date}} <span class="subheader">[id={{id}}]</span></h6>
-	            <div><a id="link-{{id}}" href="{{link}}" target="_blank">{{link}}</a></div>
-	            <h5 class="subheader" id="tags-{{id}}">{{tags}}</h5>
-	            <h6 id="note-{{id}}">{{note}}</h6>
-	            <button id="{{id}}" class="update-button button small">UPDATE</button>
-	            <button id="{{id}}" class="del-button button alert small">DEL</button>
-            </div>
-            <!-- </fieldset> -->
-        </div>
-    </script>
+	<div class="row">
+		<br><br><br>
+	</div>
+	<div class="row">
+		<div class="large-12 columns">
+			<button id="go-to-the-top-button" class="button right success">go to the top</button>
+		</div>
+	</div>
+	<div class="row">
+		<br><br><br>
+	</div>
+
+
+
+
+
+	<script id="bookmark-template" type="text/x-handlebars-template">
+		<div class="bookmark large-6 columns" id="bookmark-{{id}}">
+		<!-- <fieldset> -->
+		<div class="bookmark-container">
+			<h4 class="subheader bookmark-name" id="name-{{id}}">{{name}}</h4>
+			<h6 id="date-{{id}}">{{date}} <span class="subheader">[id={{id}}]</span></h6>
+			<div><a id="link-{{id}}" href="{{link}}" target="_blank">{{link}}</a></div>
+			<h5 class="subheader" id="tags-{{id}}">{{tags}}</h5>
+			<h6 id="note-{{id}}">{{note}}</h6>
+			<button id="{{id}}" class="update-button button small">UPDATE</button>
+			<button id="{{id}}" class="del-button button alert small">DEL</button>
+		</div>
+		<!-- </fieldset> -->
+		</div>
+	</script>
 
 	<div id="update-modal" class="reveal-modal" data-reveal>
 		<h3 class="subheader text-center">Updater</h3>
