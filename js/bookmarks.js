@@ -180,14 +180,12 @@ Spinner:true, $:true, todayLock:true*/
 
 						response = JSON.parse(xhr.responseText);
 						// console.log(response);
-						removedId = response.idDeleted;
-						// 
-						
-						// console.log(removedId);
+						removedId = parseInt(response.idDeleted);
+
 						// console.log(filteredBookmarks.length);
 						for (i = 0, len = (filteredBookmarks.length - 1); i < len; i += 1) {
 							if (filteredBookmarks[i].id === removedId) {
-								console.log("****");
+								// console.log("****");
 								filteredBookmarks.splice(i, 1);
 							}
 						}
