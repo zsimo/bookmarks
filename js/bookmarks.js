@@ -155,15 +155,12 @@ Spinner:true, $:true, todayLock:true*/
                     if (dataObject.hasOwnProperty(key)) {
                         formData.append(key, dataObject[key]);
                     }
-                }
+				}
 
-                xhr.onreadystatechange = callback;
-
-                xhr.open("POST", serverScriptUrl, true);
-
-                xhr.send(formData);
-
-            },
+				xhr.onreadystatechange = callback;
+				xhr.open("POST", serverScriptUrl, true);
+				xhr.send(formData);
+			},
 
 			deleteBockmarkCallback = function (httpRequestProgressEvent) {
 				var xhr = httpRequestProgressEvent.currentTarget,
@@ -182,17 +179,18 @@ Spinner:true, $:true, todayLock:true*/
 						// console.log(response);
 						removedId = parseInt(response.idDeleted);
 
-						// console.log(filteredBookmarks.length);
-						for (i = 0, len = (filteredBookmarks.length - 1); i < len; i += 1) {
-							if (filteredBookmarks[i].id === removedId) {
-								// console.log("****");
+						// this for might crasch while deleting the last bookmarks
+						for (i = 0, len = (filteredBookmarks.length); i < len; i += 1) {
+							if (filteredBookmarks[i].id == removedId) {
 								filteredBookmarks.splice(i, 1);
+								break;
 							}
 						}
 						// transition.perspectiveLeftOut
 						// transition.slideLeftBigOut
-						$("#bookmark-"+removedId).velocity("transition.perspectiveLeftOut", { stagger: 500 });
-						// TODO
+						// $("#bookmark-"+removedId).velocity("transition.perspectiveLeftOut", { stagger: 500 });
+						$("#bookmark-"+removedId).velocity("transition.perspectiveLeftOut");
+
 						setTimeout(function () {
 							// console.log(filteredBookmarks.length);
 							bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
@@ -200,9 +198,7 @@ Spinner:true, $:true, todayLock:true*/
 							$(".bookmark-container").velocity("transition.slideUpIn");
 						}, 400);
 
-
 						// bookmarksContent.removeChild(document.getElementById('bookmark-' + response.idDeleted));
-						// console.log("idDeleted: " + response.idDeleted);
 
 						alertBoxContent.innerHTML = 'Bookmark succesfully removed';
 						alertBox.className = 'alert-box right success show';
@@ -278,9 +274,8 @@ Spinner:true, $:true, todayLock:true*/
 						response = JSON.parse(xhr.responseText);
 						if (response.locker === 'ok') {
 							$('#unlocker-modal').foundation('reveal', 'close');
-							document.body.removeEventListener('keyup', keyUpListener);
+							document.body.removeEventListener('keypress', keyPressListener);
 							// window.location.reload();
-
 						}
 					} else {
 						console.log("xhr.status === 200 ERROR");
@@ -289,6 +284,10 @@ Spinner:true, $:true, todayLock:true*/
 				// reset the input fields
 				document.getElementById('unlocker-name').value = null;
 				document.getElementById('unlocker-pass').value = null;
+				input.value = null;
+				// hide the keyboard on iPad
+				$("#unlocker-pass").blur();
+				$("#input").blur();
 				
 			},
 			
@@ -310,18 +309,22 @@ Spinner:true, $:true, todayLock:true*/
 				var link = formLink.value,
 					obj;
 				if (link) {
-					startLoading();
-					obj = {
-						"name" : formName.value,	
-						"link" : link,
-						"tags" : formTags.value,
-						"note" : formNote.value
-					};
-		
-					talkToTheServer('php/newBookmark.php', obj, newBookmarkCallback);
-					withInputResponseToReturn = 0;
+					try {
+						startLoading();
+						obj = {
+							"name" : formName.value,	
+							"link" : link,
+							"tags" : formTags.value,
+							"note" : formNote.value
+						};
+						talkToTheServer('php/newBookmark.php', obj, newBookmarkCallback);
+						withInputResponseToReturn = 0;
+					}
+					catch (e) {
+						alert("new bookmark catch message: " + e);
+					}
 				} else {
-					document.removeEventListener('keyup', returnCallBack);
+					document.removeEventListener('keypress', returnCallBack);
 					returnListenerBool= false;
 					alert('link can not be empty');
 				}	
@@ -341,7 +344,7 @@ Spinner:true, $:true, todayLock:true*/
 					talkToTheServer('php/updateBookmark.php', obj, updateBockmarkCallback);
 					withInputResponseToReturn = 0;
 				} else {
-					document.removeEventListener('keyup', returnCallBack);
+					document.removeEventListener('keypress', returnCallBack);
 					returnListenerBool= false;
 					alert('link can not be empty');
 				}	
@@ -352,13 +355,13 @@ Spinner:true, $:true, todayLock:true*/
 				
 				if (formName.value || formLink.value || formTags.value || formNote.value) {
 					if (!returnListenerBool) {
-						document.addEventListener('keyup', returnCallBack);
+						document.addEventListener('keypress', returnCallBack);
 						returnListenerBool = true;
 					}
 
 				}
 				else {
-					document.removeEventListener('keyup', returnCallBack);
+					document.removeEventListener('keypress', returnCallBack);
 					returnListenerBool= false;
 				}
 
@@ -368,13 +371,13 @@ Spinner:true, $:true, todayLock:true*/
 
 				if (updateNameInput.value || updateLinkInput.value || updateTagsInput.value || updateNoteInput.value) {
 					if (!returnListenerBool) {
-						document.addEventListener('keyup', returnCallBack);
+						document.addEventListener('keypress', returnCallBack);
 						returnListenerBool = true;
 					}
 
 				}
 				else {
-					document.removeEventListener('keyup', returnCallBack);
+					document.removeEventListener('keypress', returnCallBack);
 					returnListenerBool= false;
 				}
 			},
@@ -390,20 +393,23 @@ Spinner:true, $:true, todayLock:true*/
 
                 $('#update-modal').foundation('reveal', 'open');
 
-            },
+			},
 
-            delButtonClickListener = function (event) {
-                // console.log(this.id);
-                if (confirm("Are you sure?")) {
-                    startLoading();
-                    var obj = {"id": this.id};
-                    talkToTheServer('php/deleteBookmark.php', obj, deleteBockmarkCallback);
-                }
+			delButtonClickListener = function (event) {
+				// console.log(this.id);
+				if (confirm("Are you sure?")) {
+					try {
+						startLoading();
+						var obj = {"id": this.id};
+						talkToTheServer('php/deleteBookmark.php', obj, deleteBockmarkCallback);
+					}
+					catch (e) {
+						alert("catch message: " + e);
+					}
+				}
+			},
 
-
-            },
-
-            pdoStudyCallback = function (httpRequestProgressEvent) {
+			pdoStudyCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget,
                     bookmarksHtml = "",
                     i,
@@ -789,13 +795,18 @@ Spinner:true, $:true, todayLock:true*/
 					}
 
 				} else if (text[0] === "!") { // locker
-					locker = text.substring(1);
+					locker = text.substring(1).trim();
 					console.log(locker);
-					if (locker === 'lock' || locker === 'exit') {
-						
+					// TODO
+					// console.log("pippo");
+					if (locker === "lock" || locker === "exit") {
+						// console.log("pippo");
 						$('#unlocker-modal').foundation('reveal', 'open');
-						document.body.addEventListener('keyup', keyUpListener);
+						document.body.addEventListener('keypress', keyPressListener);
 						talkToTheServer('php/locker.php', {today : 'lock'}, unlockerCallback);
+					}
+					else {
+						console.log("noooo");
 					}
 
 				} else if (text[0] === "@") { // // bookmarks's link
@@ -864,7 +875,7 @@ Spinner:true, $:true, todayLock:true*/
 			},
 			
 			
-			keyUpListener = function (event) {
+			keyPressListener = function (event) {
 				// old keyup listener
 				// if (event.keyCode >= 65 && event.keyCode <= 90) {
 						// keyPass += keyCharMap[event.keyCode];
@@ -873,13 +884,13 @@ Spinner:true, $:true, todayLock:true*/
 				console.log(event.keyCode);
 				if (event.keyCode === 13) {
 					// document.body.removeEventListener('keyup');
-					
+
 					var obj = {
 						name : document.getElementById('unlocker-name').value,
 						pass : document.getElementById('unlocker-pass').value,
 						today : getTodayYMD()
 					};
-					console.log(obj);
+					// console.log(obj);
 					talkToTheServer('php/locker.php', obj, unlockerCallback);
 				}
 			},
@@ -911,7 +922,7 @@ Spinner:true, $:true, todayLock:true*/
 				if (todayLock !== getTodayYMD()) {
 					// document.body.classList.add('hide');
 					$('#unlocker-modal').foundation('reveal', 'open');
-					document.body.addEventListener('keyup', keyUpListener);
+					document.body.addEventListener('keypress', keyPressListener);
 				}
 
             }()),
