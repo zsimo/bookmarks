@@ -511,6 +511,17 @@ Spinner:true, $:true, todayLock:true*/
 
 
                         stopLoading();
+                        
+                        $('#page-content').velocity({ 
+						    opacity: 1
+						}, {
+						    /* Velocity's default options: */
+						    duration: 1000,
+						    // easing: "easeOutQuint",
+						    complete: null,
+						    delay: null,
+						    mobileHA: true
+						});
 
                     } else {
                         console.log("xhr.status === 200 ERROR");
@@ -775,7 +786,7 @@ Spinner:true, $:true, todayLock:true*/
             },
             
             filter2 = function (text) {
-
+// TODO
 				filteredBookmarks = [];
 				firstBookmark = 0;
 				lastBookmark = firstBookmark + bookmarkStep;
@@ -788,7 +799,7 @@ Spinner:true, $:true, todayLock:true*/
 
 					for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
 						for (j = 0; j < tags.length; j += 1) {
-							if (jsonBookmarksArrayResponse[i].tags.indexOf(tags[j]) !== -1) {
+							if (jsonBookmarksArrayResponse[i].tags.toLowerCase().indexOf(tags[j]) !== -1) {
 								filteredBookmarks.push(jsonBookmarksArrayResponse[i]);
 							} 
 						}
@@ -797,8 +808,7 @@ Spinner:true, $:true, todayLock:true*/
 				} else if (text[0] === "!") { // locker
 					locker = text.substring(1).trim();
 					console.log(locker);
-					// TODO
-					// console.log("pippo");
+
 					if (locker === "lock" || locker === "exit") {
 						// console.log("pippo");
 						$('#unlocker-modal').foundation('reveal', 'open');
@@ -809,17 +819,17 @@ Spinner:true, $:true, todayLock:true*/
 						console.log("noooo");
 					}
 
-				} else if (text[0] === "@") { // // bookmarks's link
+				} else if (text[0] === "@") { // bookmarks's link
 					link = text.substring(1);
 					// console.log(link);
 					for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
-						if (jsonBookmarksArrayResponse[i].link.indexOf(link) !== -1) {
+						if (jsonBookmarksArrayResponse[i].link.toLowerCase().indexOf(link) !== -1) {
 							filteredBookmarks.push(jsonBookmarksArrayResponse[i]);
 						} 
 					}
 				} else { // bookmarks's name
 					for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
-						if (jsonBookmarksArrayResponse[i].name.indexOf(text) !== -1) {
+						if (jsonBookmarksArrayResponse[i].name.toLowerCase().indexOf(text) !== -1) {
 							filteredBookmarks.push(jsonBookmarksArrayResponse[i]);
 						} 
 					}
@@ -902,8 +912,9 @@ Spinner:true, $:true, todayLock:true*/
 
 				// readJsonFile("data/bookmarks_07_03_14.html");
 				// readJsonFile("data/delicious.html");
-
+				// document.getElementById("page-content").style.opacity = 0;
 				startLoading();
+				
 
 				var obj = {"input" : input.value};
 
@@ -925,6 +936,34 @@ Spinner:true, $:true, todayLock:true*/
 					document.body.addEventListener('keypress', keyPressListener);
 				}
 
+// TODO
+// $('#newBookmarkButton').velocity({ 
+    // // opacity: .1
+    // // right: 800
+    // translateZ: 0, // Force HA by animating a 3D property
+    // rotateZ: "15deg",
+     // translateX: "-800px"
+// }, {
+    // /* Velocity's default options: */
+    // duration: 2000,
+    // easing: "swing",
+    // queue: "",
+    // begin: null,
+    // progress: function (elements, percentComplete, timeRemaining, timeStart) {
+    		// // console.log(par1);
+    		// // console.log(par2);
+    		// // console.log(par3);
+    		// // console.log(par4);
+    // },
+    // complete: null,
+    // loop: false,
+    // delay: 1000,
+    // display: false,
+    // mobileHA: true
+// }).velocity({ 
+    // // opacity: .1
+    // top: 800
+// }) ;
             }()),
 
             last = "last";
@@ -936,7 +975,7 @@ Spinner:true, $:true, todayLock:true*/
         input.oninput = function (event) {
 
 			// filter(this.value);
-			filter2(this.value);
+			filter2(this.value.toLowerCase());
 
 		};
 
@@ -1045,7 +1084,10 @@ Spinner:true, $:true, todayLock:true*/
 			
 			// $('<a name="top"/>').insertBefore($('body').children().eq(0));
 			// window.location.hash = 'top'
-			document.body.scrollTop = document.documentElement.scrollTop = 0;
+			
+			// document.body.scrollTop = document.documentElement.scrollTop = 0;
+			
+			$('#pagination-buttons').velocity("scroll", { duration: 1100});
 		};
 
 		// ***************************

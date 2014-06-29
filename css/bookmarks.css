@@ -57,3 +57,7 @@
 	font-size: 48px;
 	line-height: 48px;*/
 }
+
+#page-content {
+	opacity: 0;
+}
