@@ -42,7 +42,8 @@ Spinner:true, $:true, todayLock:true*/
 			spinner = new Spinner({
 				// color : "#D8D8D8",
 				shadow : true,
-				radius : 40
+				radius : 40,
+				speed: 2
 			}),
             spinnerDiv = document.getElementById("spinner"),
             input = document.getElementById('input'),
@@ -54,11 +55,11 @@ Spinner:true, $:true, todayLock:true*/
             updateTagsInput = document.getElementById('update-tags'),
             updateNoteInput = document.getElementById('update-note'),
             updateIdInput = document.getElementById('update-id'),
-            
+
             bookmarkStep = 50,
             firstBookmark = 0,
             lastBookmark = firstBookmark + bookmarkStep,
-            
+
             firstBookmarkLabel = document.getElementById('first-bookmark'),
             lastBookmarkLabel = document.getElementById('last-bookmark'),
             totalBookmarksLabel = document.getElementById('total-bookmarks'),
@@ -67,17 +68,18 @@ Spinner:true, $:true, todayLock:true*/
             firstButton = document.getElementById("first-button"),
             previousButton = document.getElementById("previous-button"),
 			nextButton = document.getElementById("next-button"),
-			
+
 			alertBox = document.getElementById("alert"),
 			alertBoxContent = document.getElementById("alert-content"),
-			
+
 			formName = document.getElementById("formName"),
 		    formLink = document.getElementById("formLink"),
-			formTags = document.getElementById("formTags"),
+			// formTags = document.getElementById("formTags"),
+			selectizeTags,
 			formNote = document.getElementById("formNote"),
 			returnListenerBool = false,
 			withInputResponseToReturn = 0,
-			
+
 			keyCharMap = {
 				"65" : "a",
 				"66" : "b",
@@ -106,14 +108,14 @@ Spinner:true, $:true, todayLock:true*/
 				"89" : "y",
 				"90" : "z"
 			},
-			
+
 			getTodayYMD = function () {
 				var date = new Date(),
 					year = date.getFullYear(),
 					month = date.getMonth(),
 					day = date.getDay(),
                     out = '';
-					
+
 				month += 1;
 				if (month < 10) {
 					month = "0" + month;
@@ -124,7 +126,7 @@ Spinner:true, $:true, todayLock:true*/
 				}
                 out += year + month + day;
 				return out;
-				
+
 			},
 
             startLoading = function () {
@@ -136,10 +138,10 @@ Spinner:true, $:true, todayLock:true*/
                 spinner.stop();
                 document.body.classList.remove('loading');
             },
-            
+
             talkToTheServer = function (serverScriptUrl, dataObject, callback) {
                 var xhr, formData, key;
-                
+
                 try {
                     xhr = new XMLHttpRequest();
                 } catch (e) {
@@ -205,7 +207,7 @@ Spinner:true, $:true, todayLock:true*/
 						setTimeout(function () {
 							alertBox.className = 'hide';
 						}, 1000);
-						
+
 
 					} else {
 						console.log("xhr.status === 200 ERROR");
@@ -214,14 +216,14 @@ Spinner:true, $:true, todayLock:true*/
 					}
 					stopLoading();
 				}
-				
-				
+
+
 			},
 
 			updateBockmarkCallback = function (httpRequestProgressEvent) {
 				var xhr = httpRequestProgressEvent.currentTarget,
 					response,
-					id,	
+					id,
 					i,
 					len,
 					updateBookmark,
@@ -260,7 +262,7 @@ Spinner:true, $:true, todayLock:true*/
 					stopLoading();
 				}
 				$('#update-modal').foundation('reveal', 'close');
-				
+
 			},
 
 			unlockerCallback = function (httpRequestProgressEvent) {
@@ -270,7 +272,7 @@ Spinner:true, $:true, todayLock:true*/
 
 				if (xhr.readyState === 4) {
 					if (xhr.status === 200) {
-						console.log(xhr.responseText);
+						// console.log(xhr.responseText);
 						response = JSON.parse(xhr.responseText);
 						if (response.locker === 'ok') {
 							$('#unlocker-modal').foundation('reveal', 'close');
@@ -288,9 +290,9 @@ Spinner:true, $:true, todayLock:true*/
 				// hide the keyboard on iPad
 				$("#unlocker-pass").blur();
 				$("#input").blur();
-				
+
 			},
-			
+
 			returnCallBack = function (event) {
 
 				if (event.keyCode === 13) {
@@ -301,20 +303,24 @@ Spinner:true, $:true, todayLock:true*/
 					} else if (withInputResponseToReturn === UPDATE_BOOKMARK ) {
 						updateBookmarkListener();
 					}
-				} 
+				}
 
 			} ,
-			
+
 			newBookmarkListener = function () {
+
+			    // var nerdTooltip = new ZTooltip("newBookmarkButton", "left", "newBookmarkButton");
+			    // nerdTooltip.toggle();
+
 				var link = formLink.value,
 					obj;
 				if (link) {
 					try {
 						startLoading();
 						obj = {
-							"name" : formName.value,	
+							"name" : formName.value,
 							"link" : link,
-							"tags" : formTags.value,
+							"tags" : selectizeTags.getValue().toString(),
 							"note" : formNote.value
 						};
 						talkToTheServer('php/newBookmark.php', obj, newBookmarkCallback);
@@ -327,9 +333,9 @@ Spinner:true, $:true, todayLock:true*/
 					document.removeEventListener('keypress', returnCallBack);
 					returnListenerBool= false;
 					alert('link can not be empty');
-				}	
+				}
 			},
-			
+
 			updateBookmarkListener = function () {
 
 				if (updateLinkInput.value) {
@@ -347,13 +353,13 @@ Spinner:true, $:true, todayLock:true*/
 					document.removeEventListener('keypress', returnCallBack);
 					returnListenerBool= false;
 					alert('link can not be empty');
-				}	
+				}
 
 			},
-			
+
 			submitInputListener = function () {
-				
-				if (formName.value || formLink.value || formTags.value || formNote.value) {
+
+				if (formName.value || formLink.value || formNote.value) {
 					if (!returnListenerBool) {
 						document.addEventListener('keypress', returnCallBack);
 						returnListenerBool = true;
@@ -366,7 +372,7 @@ Spinner:true, $:true, todayLock:true*/
 				}
 
 			},
-			
+
 			updateInputListener = function () {
 
 				if (updateNameInput.value || updateLinkInput.value || updateTagsInput.value || updateNoteInput.value) {
@@ -381,7 +387,7 @@ Spinner:true, $:true, todayLock:true*/
 					returnListenerBool= false;
 				}
 			},
-			
+
 			updateButtonClickListener = function (event) {
 
                 updateNameInput.value = document.getElementById("name-" + this.id).innerHTML;
@@ -429,7 +435,7 @@ Spinner:true, $:true, todayLock:true*/
                     }
                 }
             },
-            
+
             getBookmarksOnThePage = function (bookmarks) {
 
 				if (bookmarks.length <= bookmarkStep) {
@@ -454,13 +460,13 @@ Spinner:true, $:true, todayLock:true*/
                 firstBookmarkLabel.innerHTML = firstBookmark;
                 lastBookmarkLabel.innerHTML = lastBookmark;
                 totalBookmarksLabel.innerHTML = bookmarks.length;
- 
+
                 return bookmarks.slice(firstBookmark, lastBookmark);
-                
+
             },
-            
+
             displayBookmarks = function (bookmarks) {
-         
+
                 // reset the screen
                 bookmarksContent.innerHTML = "";
 
@@ -469,15 +475,15 @@ Spinner:true, $:true, todayLock:true*/
                     updateButtonsArray,
                     delButtonsArray,
                     data;
-                
+
                 for (i = 0, len = bookmarks.length; i < len; i += 1) {
                     data = bookmarks[i];
                     bookmarksHtml += bookmarkTemplate(data);
                 }
                 bookmarksContent.innerHTML = bookmarksHtml;
                 // document.getElementById('bookmarks-counter').innerHTML = "bookmarks counter: " + len;
-                 
-                
+
+
                 updateButtonsArray = document.getElementsByClassName('update-button');
                 for (i = 0, len = updateButtonsArray.length; i < len; i += 1) {
                     updateButtonsArray[i].onclick = updateButtonClickListener;
@@ -487,12 +493,13 @@ Spinner:true, $:true, todayLock:true*/
                 for (i = 0, len = delButtonsArray.length; i < len; i += 1) {
                     delButtonsArray[i].onclick = delButtonClickListener;
                 }
-                
+
 
             },
 
             getBookmarksCallback = function (httpRequestProgressEvent) {
                 var xhr = httpRequestProgressEvent.currentTarget,
+                    response,
                     bookmarksOnThePage;
 
                 if (xhr.readyState === 4) {
@@ -500,19 +507,77 @@ Spinner:true, $:true, todayLock:true*/
 
                         // console.log(xhr.responseText);
 
-                        jsonBookmarksArrayResponse = JSON.parse(xhr.responseText).bookmarks;
-                        // console.log(jsonBookmarksArrayResponse);
-                        
+                        response = JSON.parse(xhr.responseText);
+                        // console.log(response);
+
+                        jsonBookmarksArrayResponse = response.bookmarks;
+                        // document.getElementById("number-of-tags").innerHTML = response.tags.length;
+
+                        document.getElementById("formTags").innerHTML = response.selectOptions;
+                        selectizeTags = $('#formTags').selectize({// +++
+                            create : true,
+                            openOnFocus : false,
+                            hideSelected : true
+                        })[0].selectize;
+
+
+                        document.getElementById("tags-select").innerHTML = response.selectOptions;
+
+
+
+                        // *********************************************************
+                        // START CHOOSEN
+                        // *********************************************************
+                        // $(".chosen-select").chosen({
+                            // inherit_select_classes : true,
+                            // placeholder_text_multiple : response.tags.length + " tags",
+                            // width: "100%"
+                        // }).change(function(obj, event) {
+                            // var tagsSelected = [],
+                                // i, j, len,
+                                // filteredBookmarks = [];
+                            // // TODO
+//
+                            // if (event.selected) {
+                                // tagsSelected.push(event.selected);
+                            // } else {
+                                // tagsSelected.splice(tagsSelected.indexOf(event.deselected, 1));
+                            // }
+//
+                            // if (tagsSelected) {
+                                // for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
+                                    // for (j = 0; j < tagsSelected.length; j += 1) {
+                                        // if (jsonBookmarksArrayResponse[i].tags.toLowerCase().indexOf(tagsSelected[j]) !== -1) {
+                                            // filteredBookmarks.push(jsonBookmarksArrayResponse[i]);
+                                        // }
+                                    // }
+                                // }
+                            // } else {
+                                // filteredBookmarks = jsonBookmarksArrayResponse;
+                            // }
+
+                            // displayBookmarks(getBookmarksOnThePage(filteredBookmarks));
+                            // totalBookmarksLabel.innerHTML = filteredBookmarks.length;
+//
+                        // });
+                        // hask to have the 2 input field with the same height
+                        // document.getElementsByClassName("default")[0].style.height = window.getComputedStyle(input).height;
+                        // document.getElementsByClassName("default")[0].style.height = "100%";
+                        // *********************************************************
+                        // STOP CHOOSEN
+                        // *********************************************************
+
+
                         filteredBookmarks = jsonBookmarksArrayResponse;//.slice(0, 100);
-                        
+
                         bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
-                        
+
                         displayBookmarks(bookmarksOnThePage);
 
 
                         stopLoading();
-                        
-                        $('#page-content').velocity({ 
+
+                        $('#page-content').velocity({
 						    opacity: 1
 						}, {
 						    /* Velocity's default options: */
@@ -575,13 +640,14 @@ Spinner:true, $:true, todayLock:true*/
 						// console.log(filteredBookmarks.length);
 						bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
 						displayBookmarks(bookmarksOnThePage);
-						
+
 						$("#bookmark-"+newBookmark.id).velocity("transition.bounceLeftIn", { stagger: 100 });
 						// $(".bookmark-container").velocity("callout.shake", { stagger: 75 });
 
 						formName.value = null;
 						formLink.value = null;
-						formTags.value = null;
+						// formTags.value = null;
+						selectizeTags.setValue("");
 						formNote.value = null;
 
 						alertBoxContent.innerHTML = 'Bookmark succesfully added';
@@ -687,14 +753,14 @@ Spinner:true, $:true, todayLock:true*/
                 talkToTheServer('php/writeBookmarks.php', {"bookmarks" : JSON.stringify(bookmarks)},
                                     sendDataToTheServerCallback);
             },
-            
+
             getArrayFiltered = function (text) {
                 var i, len, j, counter = 0, out = [], tags;
 
                 if (text[0] === "#") {
-                    
+
                     tags = text.substring(1).split(" ");
-                    // console.log(tags);
+                    console.log(tags);
 
                     for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
                         for (j = 0; j < tags.length; j += 1) {
@@ -709,7 +775,7 @@ Spinner:true, $:true, todayLock:true*/
 
                                 // document.getElementById("bookmark-"+jsonBookmarksArrayResponse[i].id).classList.remove('hide');
                                 // counter += 1;
-                                
+
                             }
                         }
                     }
@@ -743,7 +809,7 @@ Spinner:true, $:true, todayLock:true*/
 
                 if (text[0] === "#") {
                     tags = text.substring(1).split(" ");
-                    // console.log(tags);
+                    console.log(tags);
 
                     for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
                         for (j = 0; j < tags.length; j += 1) {
@@ -784,9 +850,9 @@ Spinner:true, $:true, todayLock:true*/
                 // console.log(counter);
                 document.getElementById('bookmarks-counter').innerHTML = "bookmarks counter: " + counter;
             },
-            
+
             filter2 = function (text) {
-// TODO
+
 				filteredBookmarks = [];
 				firstBookmark = 0;
 				lastBookmark = firstBookmark + bookmarkStep;
@@ -801,7 +867,7 @@ Spinner:true, $:true, todayLock:true*/
 						for (j = 0; j < tags.length; j += 1) {
 							if (jsonBookmarksArrayResponse[i].tags.toLowerCase().indexOf(tags[j]) !== -1) {
 								filteredBookmarks.push(jsonBookmarksArrayResponse[i]);
-							} 
+							}
 						}
 					}
 
@@ -825,13 +891,13 @@ Spinner:true, $:true, todayLock:true*/
 					for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
 						if (jsonBookmarksArrayResponse[i].link.toLowerCase().indexOf(link) !== -1) {
 							filteredBookmarks.push(jsonBookmarksArrayResponse[i]);
-						} 
+						}
 					}
 				} else { // bookmarks's name
 					for (i = 0, len = jsonBookmarksArrayResponse.length; i < len; i += 1) {
 						if (jsonBookmarksArrayResponse[i].name.toLowerCase().indexOf(text) !== -1) {
 							filteredBookmarks.push(jsonBookmarksArrayResponse[i]);
-						} 
+						}
 					}
 
 				}
@@ -883,14 +949,14 @@ Spinner:true, $:true, todayLock:true*/
                 xhr.send(null);
 
 			},
-			
-			
+
+
 			keyPressListener = function (event) {
 				// old keyup listener
 				// if (event.keyCode >= 65 && event.keyCode <= 90) {
 						// keyPass += keyCharMap[event.keyCode];
 				// }
-				
+
 				console.log(event.keyCode);
 				if (event.keyCode === 13) {
 					// document.body.removeEventListener('keyup');
@@ -914,7 +980,7 @@ Spinner:true, $:true, todayLock:true*/
 				// readJsonFile("data/delicious.html");
 				// document.getElementById("page-content").style.opacity = 0;
 				startLoading();
-				
+
 
 				var obj = {"input" : input.value};
 
@@ -937,7 +1003,7 @@ Spinner:true, $:true, todayLock:true*/
 				}
 
 // TODO
-// $('#newBookmarkButton').velocity({ 
+// $('#newBookmarkButton').velocity({
     // // opacity: .1
     // // right: 800
     // translateZ: 0, // Force HA by animating a 3D property
@@ -960,7 +1026,7 @@ Spinner:true, $:true, todayLock:true*/
     // delay: 1000,
     // display: false,
     // mobileHA: true
-// }).velocity({ 
+// }).velocity({
     // // opacity: .1
     // top: 800
 // }) ;
@@ -995,22 +1061,22 @@ Spinner:true, $:true, todayLock:true*/
 
             firstBookmark = 0;
             lastBookmark = bookmarkStep;
-            
+
             // this.classList.toggle('disabled');
             // previousButton.classList.toggle('disabled');
-            
+
             bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
-                        
+
             displayBookmarks(bookmarksOnThePage);
-            
+
             // nextButton.classList.remove('disabled');
         };
         previousButton.onclick = function (event) {
             var bookmarksOnThePage;
-            
+
             firstBookmark -= bookmarkStep;
             lastBookmark -= bookmarkStep;
-            
+
             if (firstBookmark <= 0) {
                 firstBookmark = 0;
                 lastBookmark = bookmarkStep;
@@ -1019,14 +1085,14 @@ Spinner:true, $:true, todayLock:true*/
             }
 
             bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
-                        
+
             displayBookmarks(bookmarksOnThePage);
-            
+
             // nextButton.classList.remove('disabled');
         };
         nextButton.onclick = function (event) {
             var bookmarksOnThePage;
-            
+
             firstBookmark += bookmarkStep;
             lastBookmark += bookmarkStep;
 
@@ -1035,26 +1101,26 @@ Spinner:true, $:true, todayLock:true*/
                 firstBookmark = lastBookmark - bookmarkStep;
                 // nextButton.classList.add('disabled');
             }
-            
+
             bookmarksOnThePage = getBookmarksOnThePage(filteredBookmarks);
             displayBookmarks(bookmarksOnThePage);
-            
+
             // firstButton.classList.remove('disabled');
             // previousButton.classList.remove('disabled');
         };
-        
+
 		formName.oninput = function () {
 			withInputResponseToReturn = NEW_BOOKMARK;
 			submitInputListener();
-		};	
+		};
 		formLink.oninput = function () {
 			withInputResponseToReturn = NEW_BOOKMARK;
 			submitInputListener();
 		};
-		formTags.oninput = function () {
-			withInputResponseToReturn = NEW_BOOKMARK;
-			submitInputListener();
-		};
+		// formTags.oninput = function () {
+			// withInputResponseToReturn = NEW_BOOKMARK;
+			// submitInputListener();
+		// };
 		formNote.oninput = function () {
 			withInputResponseToReturn = NEW_BOOKMARK;
 			submitInputListener();
@@ -1081,12 +1147,12 @@ Spinner:true, $:true, todayLock:true*/
 		document.getElementById('go-to-the-top-button').onclick = function () {
 			// document.body.scrollTop  = 0;
 			// $('body').scrollTop(0)
-			
+
 			// $('<a name="top"/>').insertBefore($('body').children().eq(0));
 			// window.location.hash = 'top'
-			
+
 			// document.body.scrollTop = document.documentElement.scrollTop = 0;
-			
+
 			$('#pagination-buttons').velocity("scroll", { duration: 1100});
 		};
 

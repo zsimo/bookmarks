@@ -4,6 +4,20 @@
 }
 
 
+#first-row {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#chosen-select-column {
+    margin-bottom: 25px;
+}
+
+
 /*.content {
     width: 100%;
 }*/
@@ -25,6 +39,7 @@
 	border: 1px solid #d8d8d8;
 	/*background: #f2f2f2;*/
 	word-wrap: break-word;
+	border-radius: 5px;
 }
 
 
@@ -61,3 +76,5 @@
 #page-content {
 	opacity: 0;
 }
+
+

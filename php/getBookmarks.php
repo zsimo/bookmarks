@@ -14,6 +14,8 @@ echo '{';
 
     require('connect.php');
 	$results = array();
+	$allTags = array();
+	$selectOptions = '';
 	$query = "SELECT * FROM bookmarks ORDER BY date DESC";
 	$jsonString = '[';
 
@@ -31,8 +33,18 @@ echo '{';
 				$book->name = $rows['name'];
 				$book->link = $rows['link'];
 				$book->date = date("D, d M Y - H:i:s", $rows['date']);
-				$book->tags = $rows['tags'];
+				$tags = trim($rows['tags']);
+				$book->tags = $tags;
 				$book->note = $rows['note'];
+
+				$tmp = explode(',', $tags);
+				for ($i = 0; $i < count($tmp); $i++) {
+					$tag = trim($tmp[$i]);
+					if (!in_array($tag, $allTags)) {
+						array_push($allTags, $tag);
+						$selectOptions .= '<option value="' . $tag . '">' . $tag . '</option>';
+					}
+				}
 
 				// $book['name'] = $rows['name'];
 				// $book['link'] = $rows['link'];
@@ -74,6 +86,9 @@ echo '{';
 
 	echo '"count" : '. $count .",";
 	echo '"bookmarks" : '. json_encode($results) .",";
+	echo '"tags" : '. json_encode($allTags) .",";
+	echo '"selectOptions" : '. json_encode($selectOptions) .",";
+
 
 
     class Person {

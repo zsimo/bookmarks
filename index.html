@@ -12,6 +12,8 @@
 		<link rel="stylesheet" href="foundation-5.2.2/css/normalize.css">
 		<link rel="stylesheet" href="foundation-5.2.2/css/foundation.min.css">
 
+		<link rel="stylesheet" href="css/lib/selectize.default.css">
+
 		<link rel="stylesheet" href="css/bookmarks.css" />
 
 		<script src="foundation-5.2.2/js/vendor/modernizr.js"></script>
@@ -29,11 +31,11 @@
 
 	<!-- <header class="header">BOOKMARKS</header> -->
 	<div id="spinner"></div>
-	
-	
+
+
 	<div id="page-content">
-	
-	<div class="row">
+
+	<div class="row" id="first-row">
 
 		<div class="large-12 columns">
 			<h1 class="subheader left title">BOOKMARKS</h1>
@@ -41,7 +43,7 @@
 				<span id="alert-content"></span>
 				<a href="#" class="close">&times;</a>
 			</div>
-			<hr/>	
+			<hr/>
 		</div>
 
 		<div class="medium-3 columns">
@@ -51,7 +53,8 @@
 			<input id="formLink" type="text" name="link" placeholder="link">
 		</div>
 		<div class="medium-3 columns">
-			<input id="formTags" type="text" name="tags" placeholder="tags,tags">
+			<!-- <input id="formTags" type="text" name="tags" placeholder="tags,tags"> -->
+			<select id="formTags" multiple="multiple" placeholder="tags,tags"></select>
 		</div>
 		<div class="medium-3 columns">
 			<input id="formNote" type="text" name="note" placeholder="note">
@@ -77,11 +80,20 @@
 			<br><br>
 			<hr/>
 		</div>
-		
+
 		<!-- <p id="bookmarks-counter"></p> -->
-		<div class="large-12 columns">
-			<input id="input" type="text" placeholder="search... [name]  [#tag] [@link]">
+		<div class="large-6 columns">
+			<input id="input" type="text" placeholder="search... [name]  [#tag1 tag2] [@link]">
 		</div>
+
+		<div class="large-6 columns" id="chosen-select-column">
+				<select id="tags-select"></select>
+		</div>
+
+		<!-- <div class="large-1 columns">
+			<h5><small><span id="number-of-tags"></span> tags</small></h5>
+		</div> -->
+
 
 	</div>
 
@@ -121,6 +133,7 @@
 		</div>
 	</script>
 
+
 	<div id="update-modal" class="reveal-modal" data-reveal>
 		<h3 class="subheader text-center">Updater</h3>
 		<input id="update-name" type="text" name="name" placeholder="name">
@@ -132,24 +145,27 @@
 		<button id="ok-button" class="updatebutton button right success">OK</button>
 		<button id="cancel-button" class="updatebutton button right alert">Cancel</button>
 	</div>
-	
+
 	<div id="unlocker-modal" class="reveal-modal small" data-reveal>
 		<h3 class="subheader text-center">Unlocker</h3>
 		<input id="unlocker-name" type="text" placeholder="name">
 		<input id="unlocker-pass" type="password" placeholder="password">
 		<br>
 	</div>
-	
+
 	<script src="js/lib/spin.min.js"></script>
 	<script src="foundation-5.2.2/js/vendor/jquery.js"></script>
 	<script src="foundation-5.2.2/js/vendor/fastclick.js"></script>
 	<script src="foundation-5.2.2/js/foundation.min.js"></script>
+
+	<script src="js/lib/selectize.min.js"></script>
 
 	<script src="js/lib/jquery.velocity.min.js"></script>
 	<script src="js/lib/velocity.ui.js"></script>
 
 	<script src="js/lib/handlebars-v1.3.0-min.js"></script>
 	<script src="lock.json"></script>
+	<!-- <script src="js/ZTooltip.js"></script> -->
 	<script src="js/bookmarks.js"></script>
 
 
